@@ -21,8 +21,6 @@ import java.net.http.HttpRequest;
 public class SecurityConfig {
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-    @Autowired
     SecurityFilter securityFilter;
 
     @Bean
