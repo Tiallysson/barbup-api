@@ -33,7 +33,7 @@ public class AuthController {
 
         String token = this.tokenService.generateToken((User) auth.getPrincipal());
 
-        return  ResponseEntity.ok(new ResponseDTO(token));
+        return ResponseEntity.ok(new ResponseDTO(token));
     }
 
     @PostMapping("/register")
@@ -43,10 +43,6 @@ public class AuthController {
 
         User user = new User();
         user.setPassword(passwordEncoder.encode(body.password()));
-        user.setEmail(body.email());
-        user.setPhone(body.phone());
-        user.setName(body.name());
-        user.setRole(UserRole.USER);
 
         this.repository.save(user);
 

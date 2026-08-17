@@ -1,5 +1,6 @@
 package com.barbup.barbup_api.domain.user;
 
+import com.barbup.barbup_api.domain.user.dto.RegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -61,5 +62,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public User(RegisterRequestDTO registerRequest) {
+        this.email = registerRequest.email();
+        this.phone = registerRequest.phone();
+        this.name = registerRequest.name();
+        this.role = UserRole.USER;
     }
 }
