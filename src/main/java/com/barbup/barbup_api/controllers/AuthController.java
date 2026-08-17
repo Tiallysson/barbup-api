@@ -41,7 +41,7 @@ public class AuthController {
         if (this.repository.findByEmail(body.email()) != null)
             return ResponseEntity.badRequest().build();
 
-        User user = new User();
+        User user = new User(body);
         user.setPassword(passwordEncoder.encode(body.password()));
 
         this.repository.save(user);
