@@ -27,7 +27,7 @@ public class UserController {
 
             return ResponseEntity.ok(new UpdatedResponseDTO(user));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().build();
         }
     }
 }

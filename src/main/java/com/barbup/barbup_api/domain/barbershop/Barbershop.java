@@ -29,6 +29,8 @@ public class Barbershop extends BaseEntity {
     private String address;
     @Column(nullable = false)
     private String city;
+    @Column(nullable = false, length = 9)
+    private String zipcode;
     @Column(nullable = false)
     private String state;
     private String logoUrl;
