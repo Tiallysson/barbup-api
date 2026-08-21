@@ -31,6 +31,7 @@ public class BarbershopService {
         b.setSlug(dto.slug());
         b.setPhone(dto.phone());
         b.setState(dto.state());
+        b.setZipcode(dto.zipcode());
 
         if (dto.userId() == null || dto.userId().isBlank()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

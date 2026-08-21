@@ -10,6 +10,7 @@ public record CreateBarbershopDTO(
         String address,
         String city,
         String state,
+        String zipcode,
         String logoUrl,
         String userId
 ) {
