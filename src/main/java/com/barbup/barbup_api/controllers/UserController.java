@@ -22,12 +22,7 @@ public class UserController {
 
     @PutMapping("/update")
     public ResponseEntity update(@RequestBody @Validated UpdateRequestDTO body) {
-        try {
-            var user = this.service.updateUser(body);
-
-            return ResponseEntity.ok(new UpdatedResponseDTO(user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        var user = this.service.updateUser(body);
+        return ResponseEntity.ok(new UpdatedResponseDTO(user));
     }
 }

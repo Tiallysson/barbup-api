@@ -18,11 +18,7 @@ public class BarbershopController {
 
     @PostMapping("/create")
     public ResponseEntity<BarbershopResponseDTO> create(@RequestBody CreateBarbershopDTO body) {
-        try {
-            var barbershop = service.createBarbershop(body);
-            return ResponseEntity.ok(new BarbershopResponseDTO(barbershop));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        var barbershop = service.createBarbershop(body);
+        return ResponseEntity.ok(new BarbershopResponseDTO(barbershop));
     }
 }
