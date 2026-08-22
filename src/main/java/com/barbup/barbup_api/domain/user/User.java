@@ -1,5 +1,6 @@
 package com.barbup.barbup_api.domain.user;
 
+import com.barbup.barbup_api.domain.abstracts.BaseEntity;
 import com.barbup.barbup_api.domain.user.dto.RegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,10 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, unique = true)

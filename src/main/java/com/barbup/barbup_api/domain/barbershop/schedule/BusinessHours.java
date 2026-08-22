@@ -18,10 +18,6 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BusinessHours extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     @ManyToOne
     @JoinColumn(name = "barbershop_id", nullable = false)
     private Barbershop barbershop;

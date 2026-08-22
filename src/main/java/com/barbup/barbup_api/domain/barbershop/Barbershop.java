@@ -15,9 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Barbershop extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)

@@ -21,10 +21,6 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Appointment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     @ManyToOne
     @JoinColumn(name = "barbershop_id", nullable = false)
     private Barbershop barbershop;
