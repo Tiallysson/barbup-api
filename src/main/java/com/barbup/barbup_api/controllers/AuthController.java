@@ -45,7 +45,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Validated RegisterRequestDTO body) {
-        if (this.repository.findByEmail(body.email()) != null)
+        if (this.repository.findByEmail(body.email()).isPresent())
             throw new EmailAlreadyExistsException(body.email());
 
         User user = new User(body);

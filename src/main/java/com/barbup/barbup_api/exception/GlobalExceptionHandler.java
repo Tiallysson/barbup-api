@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(@NonNull MethodArgumentNotValidException ex) {
+        ex.printStackTrace();
         return ResponseEntity.badRequest().body(ex.getBindingResult().getFieldErrors());
     }
 
@@ -55,6 +56,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception ex) {
+        ex.printStackTrace();
         return ResponseEntity.internalServerError().body("Internal server error");
     }
 }
