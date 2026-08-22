@@ -17,10 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BarberTimeOff extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     @ManyToOne
     @JoinColumn(name = "barbershop_member_id", nullable = false)
     private Member barber;

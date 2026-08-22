@@ -16,14 +16,14 @@ import java.time.ZoneOffset;
 public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
-    public String generateToken(User user) {
+    public String generateToken(User user, Instant expiresAt) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             String token = JWT.create()
                     .withIssuer("barbup-api")
                     .withSubject(user.getEmail())
-                    .withExpiresAt(this.generateExpirationDate())
+                    .withExpiresAt(expiresAt)
                     .sign(algorithm);
 
             return token;
@@ -46,7 +46,7 @@ public class TokenService {
         }
     }
 
-    private Instant generateExpirationDate() {
+    public Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-3"));
     }
 }
