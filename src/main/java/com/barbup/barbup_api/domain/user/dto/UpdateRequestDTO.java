@@ -1,4 +1,14 @@
 package com.barbup.barbup_api.domain.user.dto;
 
-public record UpdateRequestDTO(String id, String name, String email, String phone) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UpdateRequestDTO(
+        @NotBlank
+        String id,
+        @NotBlank
+        String name,
+        @NotBlank
+        String email,
+        @NotBlank
+        String phone) {
 }

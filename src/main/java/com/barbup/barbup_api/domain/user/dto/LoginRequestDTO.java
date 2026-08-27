@@ -1,4 +1,11 @@
 package com.barbup.barbup_api.domain.user.dto;
 
-public record LoginRequestDTO (String email, String password) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record LoginRequestDTO (
+        @NotNull
+        String email,
+        @NotNull
+        String password) {
 }

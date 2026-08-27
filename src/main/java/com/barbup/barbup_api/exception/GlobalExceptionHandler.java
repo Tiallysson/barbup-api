@@ -49,6 +49,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(InvalidBusinessHourException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidBusinessHour(InvalidBusinessHourException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(BusinessHourConflictException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBusinessHourConflict(BusinessHourConflictException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleMessageNotReadable(HttpMessageNotReadableException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body missing or malformed JSON");
