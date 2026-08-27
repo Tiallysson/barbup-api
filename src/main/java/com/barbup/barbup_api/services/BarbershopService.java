@@ -3,8 +3,11 @@ package com.barbup.barbup_api.services;
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.barbershop.dto.BarbershopResponseDTO;
 import com.barbup.barbup_api.domain.barbershop.dto.CreateBarbershopDTO;
+import com.barbup.barbup_api.domain.barbershop.member.Member;
+import com.barbup.barbup_api.domain.barbershop.member.MemberRole;
 import com.barbup.barbup_api.domain.user.User;
 import com.barbup.barbup_api.repositories.BarbershopRepository;
+import com.barbup.barbup_api.repositories.MemberRepository;
 import com.barbup.barbup_api.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class BarbershopService {
     UserRepository userRepository;
     @Autowired
     private BarbershopRepository barbershopRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     public Barbershop createBarbershop(CreateBarbershopDTO dto) {
         Barbershop b = new Barbershop();
@@ -44,6 +49,13 @@ public class BarbershopService {
         }
 
         this.barbershopRepository.save(b);
+
+        Member m = new Member();
+        m.setBarbershop(b);
+        m.setUser(b.getOwner());
+        m.setRole(MemberRole.OWNER);
+
+        this.memberRepository.save(m);
 
         return b;
     }
