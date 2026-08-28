@@ -1,6 +1,7 @@
 package com.barbup.barbup_api.exception;
 
-import com.barbup.barbup_api.domain.user.dto.ErrorResponseDTO;
+import com.barbup.barbup_api.domain.dto.ErrorResponseDTO;
+import com.barbup.barbup_api.domain.dto.ValidationErrorDetails;
 import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
@@ -13,22 +14,34 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidation(@NonNull MethodArgumentNotValidException ex) {
-        ex.printStackTrace();
-        return ResponseEntity.badRequest().body(ex.getBindingResult().getFieldErrors());
+    public ResponseEntity<List<ValidationErrorDetails>> handleValidation(@NonNull MethodArgumentNotValidException ex) {
+        List<ValidationErrorDetails> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(f -> new ValidationErrorDetails(
+                        f.getField(),
+                        f.getDefaultMessage()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(@NonNull EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleNotFound(@NonNull EntityNotFoundException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(@NonNull AccessDeniedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -62,13 +75,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleMessageNotReadable(HttpMessageNotReadableException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body missing or malformed JSON");
+    public ResponseEntity<ErrorResponseDTO> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        var error = new ErrorResponseDTO("Request body missing or malformed JSON");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception ex) {
-        ex.printStackTrace();
-        return ResponseEntity.internalServerError().body("Internal server error");
+        var error = new ErrorResponseDTO("Internal server error");
+        return ResponseEntity.internalServerError().body(error);
     }
 }

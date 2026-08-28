@@ -1,8 +1,8 @@
 package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.barbershop.schedule.BusinessHours;
-import com.barbup.barbup_api.domain.barbershop.schedule.dto.BusinessHourDto;
+import com.barbup.barbup_api.domain.schedule.BusinessHours;
+import com.barbup.barbup_api.domain.schedule.dto.BusinessHourDto;
 import com.barbup.barbup_api.domain.user.User;
 import com.barbup.barbup_api.exception.BusinessHourConflictException;
 import com.barbup.barbup_api.exception.InvalidBusinessHourException;

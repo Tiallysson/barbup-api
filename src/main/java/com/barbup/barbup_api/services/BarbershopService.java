@@ -1,10 +1,9 @@
 package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.barbershop.dto.BarbershopResponseDTO;
 import com.barbup.barbup_api.domain.barbershop.dto.CreateBarbershopDTO;
-import com.barbup.barbup_api.domain.barbershop.member.Member;
-import com.barbup.barbup_api.domain.barbershop.member.MemberRole;
+import com.barbup.barbup_api.domain.member.Member;
+import com.barbup.barbup_api.domain.member.MemberRole;
 import com.barbup.barbup_api.domain.user.User;
 import com.barbup.barbup_api.repositories.BarbershopRepository;
 import com.barbup.barbup_api.repositories.MemberRepository;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class BarbershopService {

@@ -1,7 +1,7 @@
-package com.barbup.barbup_api.domain.barbershop.schedule;
+package com.barbup.barbup_api.domain.schedule;
 
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
-import com.barbup.barbup_api.domain.barbershop.member.Member;
+import com.barbup.barbup_api.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

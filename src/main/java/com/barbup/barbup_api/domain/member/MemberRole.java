@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.domain.barbershop.member;
+package com.barbup.barbup_api.domain.member;
 
 public enum MemberRole {
     OWNER, BARBER, RECEPTIONIST
