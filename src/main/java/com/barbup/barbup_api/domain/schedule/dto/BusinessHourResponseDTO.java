@@ -1,6 +1,6 @@
-package com.barbup.barbup_api.domain.barbershop.schedule.dto;
+package com.barbup.barbup_api.domain.schedule.dto;
 
-import com.barbup.barbup_api.domain.barbershop.schedule.BusinessHours;
+import com.barbup.barbup_api.domain.schedule.BusinessHours;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;

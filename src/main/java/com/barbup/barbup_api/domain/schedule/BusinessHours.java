@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.domain.barbershop.service;
+package com.barbup.barbup_api.domain.schedule;
 
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
@@ -8,25 +8,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "service")
+@Table(
+        name = "business_hours",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_business_hours_barbershop_day",
+                columnNames = {"barbershop_id", "day_of_week"}
+        )
+)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service extends BaseEntity {
+public class BusinessHours extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "barbershop_id", nullable = false)
     private Barbershop barbershop;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String name;
+    private DayOfWeek dayOfWeek;
     @Column(nullable = false)
-    private String description;
+    private LocalTime openTime;
     @Column(nullable = false)
-    private BigDecimal price;
-    @Column(nullable = false)
-    private Integer durationMinutes;
+    private LocalTime closeTime;
 }

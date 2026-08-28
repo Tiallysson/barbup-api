@@ -1,30 +1,32 @@
-package com.barbup.barbup_api.domain.barbershop.member;
+package com.barbup.barbup_api.domain.service;
 
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "barbershop_member")
+@Table(name = "service")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member extends BaseEntity {
+public class Service extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "barbershop_id", nullable = false)
     private Barbershop barbershop;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Enumerated(EnumType.STRING)
-    private MemberRole role;
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String description;
+    @Column(nullable = false)
+    private BigDecimal price;
+    @Column(nullable = false)
+    private Integer durationMinutes;
 }
-

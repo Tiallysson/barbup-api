@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.domain.barbershop.schedule.dto;
+package com.barbup.barbup_api.domain.schedule.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

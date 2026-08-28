@@ -1,6 +1,6 @@
 package com.barbup.barbup_api.repositories;
 
-import com.barbup.barbup_api.domain.barbershop.member.Member;
+import com.barbup.barbup_api.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, String> {

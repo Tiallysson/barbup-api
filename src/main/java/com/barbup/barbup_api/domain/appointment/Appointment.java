@@ -1,9 +1,9 @@
-package com.barbup.barbup_api.domain.barbershop.appointment;
+package com.barbup.barbup_api.domain.appointment;
 
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
 import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.barbershop.member.Member;
-import com.barbup.barbup_api.domain.barbershop.service.Service;
+import com.barbup.barbup_api.domain.member.Member;
+import com.barbup.barbup_api.domain.service.Service;
 import com.barbup.barbup_api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
