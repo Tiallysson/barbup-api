@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
 
+import java.util.UUID;
+
 public record CreateBarbershopDTO(
         @NotBlank
         String name,
@@ -21,7 +23,7 @@ public record CreateBarbershopDTO(
         @NotBlank
         String phone,
         String logoUrl,
-        String userId,
+        UUID userId,
         @NotNull(message = "Address cannot possible null")
         @Valid
         AddressDto address

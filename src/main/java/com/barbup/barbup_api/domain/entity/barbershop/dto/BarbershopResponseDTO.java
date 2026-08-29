@@ -3,14 +3,16 @@ package com.barbup.barbup_api.domain.entity.barbershop.dto;
 import com.barbup.barbup_api.domain.entity.address.Address;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 
+import java.util.UUID;
+
 public record BarbershopResponseDTO(
-        String id,
+        UUID id,
         String name,
         String slug,
         String document,
         String phone,
         String logoUrl,
-        String userId,
+        UUID userId,
         Address addressId
 ) {
     public BarbershopResponseDTO(Barbershop barbershop) {
