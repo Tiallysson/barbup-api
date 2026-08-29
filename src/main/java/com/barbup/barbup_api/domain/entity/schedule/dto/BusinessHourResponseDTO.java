@@ -4,10 +4,11 @@ import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public record BusinessHourResponseDTO(
-        String id,
-        String barbershopId,
+        UUID id,
+        UUID barbershopId,
         DayOfWeek dayOfWeek,
         LocalTime openTime,
         LocalTime closeTime

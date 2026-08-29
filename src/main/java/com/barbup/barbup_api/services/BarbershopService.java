@@ -17,6 +17,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class BarbershopService {
     public Barbershop createBarbershop(CreateBarbershopDTO dto) {
         User owner;
 
-        if (dto.userId() == null || dto.userId().isBlank()) {
+        if (dto.userId() == null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             owner = (User) authentication.getPrincipal();
         } else {

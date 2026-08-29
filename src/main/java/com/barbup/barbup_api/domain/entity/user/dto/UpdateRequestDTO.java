@@ -4,9 +4,11 @@ import com.barbup.barbup_api.domain.entity.barbershop.validation.PhoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.UUID;
+
 public record UpdateRequestDTO(
         @NotBlank
-        String id,
+        UUID id,
         @NotBlank
         String name,
         @Email

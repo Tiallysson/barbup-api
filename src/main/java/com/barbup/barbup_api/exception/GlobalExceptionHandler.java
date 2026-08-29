@@ -4,11 +4,13 @@ import com.barbup.barbup_api.domain.dto.ErrorResponseDTO;
 import com.barbup.barbup_api.domain.dto.ValidationErrorDetails;
 import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -62,6 +64,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(EmailAlreadyVerifiedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEmailAlreadyVerified(EmailAlreadyVerifiedException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(InvalidVerificationCodeException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidVerificationCode(InvalidVerificationCodeException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDisabled(DisabledException ex) {
+        var error = new ErrorResponseDTO("Email not verified");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
     @ExceptionHandler(InvalidBusinessHourException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidBusinessHour(InvalidBusinessHourException ex) {
         var error = new ErrorResponseDTO(ex.getMessage());
@@ -71,6 +91,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessHourConflictException.class)
     public ResponseEntity<ErrorResponseDTO> handleBusinessHourConflict(BusinessHourConflictException ex) {
         var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        var error = new ErrorResponseDTO("Duplicate or invalid data");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
