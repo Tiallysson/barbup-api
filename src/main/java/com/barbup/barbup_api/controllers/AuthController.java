@@ -1,11 +1,10 @@
 package com.barbup.barbup_api.controllers;
 
-import com.barbup.barbup_api.domain.user.User;
-import com.barbup.barbup_api.domain.user.UserRole;
-import com.barbup.barbup_api.domain.user.dto.LoginRequestDTO;
-import com.barbup.barbup_api.domain.user.dto.RegisterRequestDTO;
-import com.barbup.barbup_api.domain.user.dto.ResponseDTO;
-import com.barbup.barbup_api.domain.user.dto.UserCreatedResponseDTO;
+import com.barbup.barbup_api.domain.entity.user.User;
+import com.barbup.barbup_api.domain.entity.user.dto.LoginRequestDTO;
+import com.barbup.barbup_api.domain.entity.user.dto.RegisterRequestDTO;
+import com.barbup.barbup_api.domain.entity.user.dto.ResponseDTO;
+import com.barbup.barbup_api.domain.entity.user.dto.UserCreatedResponseDTO;
 import com.barbup.barbup_api.exception.EmailAlreadyExistsException;
 import com.barbup.barbup_api.infra.security.TokenService;
 import com.barbup.barbup_api.repositories.UserRepository;

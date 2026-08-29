@@ -1,12 +1,12 @@
 package com.barbup.barbup_api.controllers;
 
-import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.barbershop.dto.BarbershopResponseDTO;
-import com.barbup.barbup_api.domain.barbershop.dto.CreateBarbershopDTO;
-import com.barbup.barbup_api.domain.schedule.BusinessHours;
-import com.barbup.barbup_api.domain.schedule.dto.BusinessHourDto;
-import com.barbup.barbup_api.domain.schedule.dto.BusinessHourResponseDTO;
-import com.barbup.barbup_api.domain.user.User;
+import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
+import com.barbup.barbup_api.domain.entity.barbershop.dto.BarbershopResponseDTO;
+import com.barbup.barbup_api.domain.entity.barbershop.dto.CreateBarbershopDTO;
+import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
+import com.barbup.barbup_api.domain.entity.schedule.dto.BusinessHourDto;
+import com.barbup.barbup_api.domain.entity.schedule.dto.BusinessHourResponseDTO;
+import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.services.BarbershopService;
 import com.barbup.barbup_api.services.BusinessHoursService;
 import lombok.RequiredArgsConstructor;

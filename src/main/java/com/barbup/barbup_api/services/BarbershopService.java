@@ -1,20 +1,28 @@
 package com.barbup.barbup_api.services;
 
-import com.barbup.barbup_api.domain.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.barbershop.dto.CreateBarbershopDTO;
-import com.barbup.barbup_api.domain.member.Member;
-import com.barbup.barbup_api.domain.member.MemberRole;
-import com.barbup.barbup_api.domain.user.User;
+import com.barbup.barbup_api.domain.entity.address.Address;
+import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
+import com.barbup.barbup_api.domain.entity.barbershop.dto.CreateBarbershopDTO;
+import com.barbup.barbup_api.domain.entity.barbershop.validation.Zipcode;
+import com.barbup.barbup_api.domain.entity.member.Member;
+import com.barbup.barbup_api.domain.entity.member.MemberRole;
+import com.barbup.barbup_api.domain.entity.user.User;
+import com.barbup.barbup_api.domain.mappers.AddressMapper;
+import com.barbup.barbup_api.domain.mappers.BarbershopMapper;
 import com.barbup.barbup_api.repositories.BarbershopRepository;
 import com.barbup.barbup_api.repositories.MemberRepository;
 import com.barbup.barbup_api.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BarbershopService {
     @Autowired
     UserRepository userRepository;
@@ -23,37 +31,33 @@ public class BarbershopService {
     @Autowired
     private MemberRepository memberRepository;
 
+    private final AddressMapper addressMapper;
+    private final BarbershopMapper barbershopMapper;
+
     public Barbershop createBarbershop(CreateBarbershopDTO dto) {
-        Barbershop b = new Barbershop();
-        b.setAddress(dto.address());
-        b.setCity(dto.city());
-        b.setDocument(dto.document());
-        b.setLogoUrl(dto.logoUrl());
-        b.setName(dto.name());
-        b.setSlug(dto.slug());
-        b.setPhone(dto.phone());
-        b.setState(dto.state());
-        b.setZipcode(dto.zipcode());
+        User owner;
 
         if (dto.userId() == null || dto.userId().isBlank()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User authenticatedUser = (User) authentication.getPrincipal();
-            b.setOwner(authenticatedUser);
+            owner = (User) authentication.getPrincipal();
         } else {
-            User owner = userRepository.findById(dto.userId())
+            owner = userRepository.findById(dto.userId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            b.setOwner(owner);
         }
 
-        this.barbershopRepository.save(b);
+        Address address = addressMapper.toEntity(dto.address());
+        Barbershop barbershop = barbershopMapper.toEntity(dto, owner);
+        barbershop.setAddress(address);
+
+        this.barbershopRepository.save(barbershop);
 
         Member m = new Member();
-        m.setBarbershop(b);
-        m.setUser(b.getOwner());
+        m.setBarbershop(barbershop);
+        m.setUser(barbershop.getOwner());
         m.setRole(MemberRole.OWNER);
 
         this.memberRepository.save(m);
 
-        return b;
+        return barbershop;
     }
 }
