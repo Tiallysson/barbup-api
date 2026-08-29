@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,6 +29,11 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     @Column(nullable = false, columnDefinition = "smallint default 0")
     private UserRole role;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean emailVerified = false;
+    @Column(length = 6)
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiresAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -59,7 +65,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.emailVerified;
     }
 
     public User(RegisterRequestDTO registerRequest) {

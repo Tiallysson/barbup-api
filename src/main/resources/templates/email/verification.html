@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirme seu cadastro</title>
+    <!--[if !mso]><!-->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <!--<![endif]-->
+</head>
+<body style="margin:0; padding:0; background-color:#FFFFFF;">
+
+<!-- pré-visualização na caixa de entrada (não aparece no corpo) -->
+<div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    Seu código de confirmação do Barbup chegou.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background-color:#FFFFFF;">
+    <tr>
+        <td align="center" style="padding:48px 16px;">
+
+            <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0"
+                   style="width:560px; max-width:100%;">
+                <!-- card -->
+                <tr>
+                    <td bgcolor="#FFFFFF"
+                        style="background-color:#FFFFFF; border:1px solid #E8EAEF;
+                               border-radius:12px; padding:64px 56px;">
+
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:28px; font-weight:bold; line-height:36px;
+                                           letter-spacing:-0.5px; color:#1E293B; padding-bottom:24px;">
+                                    Bem-vindo ao Barbup
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:17px; font-weight:normal; line-height:28px;
+                                           color:#64748B; padding-bottom:48px;">
+                                    Olá, <span th:text="${username}">Fulano</span>! Confirme seu e-mail
+                                    com o código abaixo para concluir seu cadastro.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center" style="padding-bottom:16px;">
+                                    <span th:text="${verificationCode}"
+                                          style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                                 font-size:38px; font-weight:bold; line-height:46px;
+                                                 letter-spacing:8px; color:#1E293B;">000000</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:14px; line-height:22px; color:#94A3B8;
+                                           padding-bottom:48px;">
+                                    Expira em <span th:text="${expirationMinutes}">15</span> minutos.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:17px; line-height:28px; color:#64748B;
+                                           padding-bottom:36px;">
+                                    Se você não solicitou este cadastro, pode ignorar este e-mail
+                                    com segurança.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:17px; line-height:28px; color:#64748B;">
+                                    Obrigado,<br>Barbup
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- rodapé -->
+                <tr>
+                    <td align="center" style="padding:40px 0 0 0;
+                               font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                               font-size:14px; line-height:22px; color:#94A3B8;">
+                        Este é um e-mail automático de confirmação de cadastro.
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
