@@ -1,6 +1,6 @@
 package com.barbup.barbup_api.repositories;
 
-import com.barbup.barbup_api.domain.schedule.BusinessHours;
+import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.DayOfWeek;
