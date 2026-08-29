@@ -34,7 +34,7 @@ public class Address extends BaseEntity {
     private String state;
 
     @Column(nullable = false)
-    private String zipCode;
+    private String zipcode;
 
     private Double latitude;
     private Double longitude;
