@@ -7,7 +7,7 @@ import com.barbup.barbup_api.exception.EmailAlreadyExistsException;
 import com.barbup.barbup_api.exception.EmailAlreadyVerifiedException;
 import com.barbup.barbup_api.exception.InvalidVerificationCodeException;
 import com.barbup.barbup_api.infra.services.EmailService;
-import com.barbup.barbup_api.infra.services.EmailTemplareRenderer;
+import com.barbup.barbup_api.infra.services.EmailTemplateRenderer;
 import com.barbup.barbup_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +30,7 @@ public class AuthService {
     @Autowired
     private EmailService emailService;
     @Autowired
-    private EmailTemplareRenderer emailTemplareRenderer;
+    private EmailTemplateRenderer emailTemplateRenderer;
 
     public User register(RegisterRequestDTO body) {
         if (this.userRepository.findByEmail(body.email()).isPresent())
@@ -70,7 +70,7 @@ public class AuthService {
     }
 
     private void sendVerificationEmail(User user) {
-        String htmlBody = emailTemplareRenderer.render("email/verification", Map.of(
+        String htmlBody = emailTemplateRenderer.render("email/verification", Map.of(
                 "username", user.getName(),
                 "verificationCode", user.getVerificationCode(),
                 "expirationMinutes", VERIFICATION_CODE_VALIDITY_MINUTES

@@ -100,6 +100,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(EmailSendException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEmailSend(EmailSendException ex) {
+        var error = new ErrorResponseDTO("Unable to send email at the moment");
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDTO> handleMessageNotReadable(HttpMessageNotReadableException ex) {
         var error = new ErrorResponseDTO("Request body missing or malformed JSON");
