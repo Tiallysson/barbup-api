@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class EmailTemplareRenderer {
+public class EmailTemplateRenderer {
 
     private final TemplateEngine templateEngine;
 
