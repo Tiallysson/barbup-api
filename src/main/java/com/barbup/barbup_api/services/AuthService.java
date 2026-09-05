@@ -8,7 +8,7 @@ import com.barbup.barbup_api.shared.exception.EmailAlreadyVerifiedException;
 import com.barbup.barbup_api.shared.exception.InvalidVerificationCodeException;
 import com.barbup.barbup_api.infra.services.EmailService;
 import com.barbup.barbup_api.infra.services.EmailTemplateRenderer;
-import com.barbup.barbup_api.repositories.UserRepository;
+import com.barbup.barbup_api.infra.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -2,7 +2,7 @@ package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.shared.dto.auth.UpdateRequestDTO;
-import com.barbup.barbup_api.repositories.UserRepository;
+import com.barbup.barbup_api.infra.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

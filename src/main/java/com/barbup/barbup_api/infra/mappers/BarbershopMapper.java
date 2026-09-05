@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.domain.mappers;
+package com.barbup.barbup_api.infra.mappers;
 
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.shared.dto.barbershop.CreateBarbershopDTO;
