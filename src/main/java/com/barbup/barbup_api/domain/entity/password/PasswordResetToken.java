@@ -33,9 +33,6 @@ public class PasswordResetToken extends BaseEntity {
 
     private Instant usedAt;
 
-    @Column(nullable = false)
-    private Instant createdAt = Instant.now();
-
     public PasswordResetToken(UUID userId, String tokenHash, Instant expiresAt) {
         this.userId = userId;
         this.tokenHash = tokenHash;
