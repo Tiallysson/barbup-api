@@ -1,22 +1,21 @@
 package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.entity.user.User;
+import com.barbup.barbup_api.infra.event.UserCreatedEvent;
 import com.barbup.barbup_api.shared.dto.auth.ConfirmEmailRequestDTO;
 import com.barbup.barbup_api.shared.dto.auth.RegisterRequestDTO;
 import com.barbup.barbup_api.shared.exception.EmailAlreadyExistsException;
 import com.barbup.barbup_api.shared.exception.EmailAlreadyVerifiedException;
 import com.barbup.barbup_api.shared.exception.InvalidVerificationCodeException;
-import com.barbup.barbup_api.infra.email.EmailService;
-import com.barbup.barbup_api.infra.email.EmailTemplateRenderer;
 import com.barbup.barbup_api.infra.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Service
 public class AuthService {
@@ -28,9 +27,7 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private EmailService emailService;
-    @Autowired
-    private EmailTemplateRenderer emailTemplateRenderer;
+    private ApplicationEventPublisher eventPublisher;
 
     public User register(RegisterRequestDTO body) {
         if (this.userRepository.findByEmail(body.email()).isPresent())
@@ -43,7 +40,7 @@ public class AuthService {
 
         this.userRepository.save(user);
 
-        sendVerificationEmail(user);
+        eventPublisher.publishEvent(new UserCreatedEvent(user));
 
         return user;
     }
@@ -67,16 +64,6 @@ public class AuthService {
         user.setVerificationCodeExpiresAt(null);
 
         this.userRepository.save(user);
-    }
-
-    private void sendVerificationEmail(User user) {
-        String htmlBody = emailTemplateRenderer.render("email/verification", Map.of(
-                "username", user.getName(),
-                "verificationCode", user.getVerificationCode(),
-                "expirationMinutes", VERIFICATION_CODE_VALIDITY_MINUTES
-        ));
-
-        this.emailService.sendMail(user.getEmail(), "Confirme seu cadastro - Barbup", htmlBody);
     }
 
     private String generateVerificationCode() {
