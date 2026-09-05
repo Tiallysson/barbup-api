@@ -15,11 +15,11 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 
     @Modifying
     @Query("""
-        UPDATE password_reset_tokens c
-           SET c.used_at = :now
-         WHERE c.user_id = :userId
-           AND c.used_at IS NULL
-           AND c.expires_at > :now
+        UPDATE PasswordResetToken c
+           SET c.usedAt = :now
+         WHERE c.userId = :userId
+           AND c.usedAt IS NULL
+           AND c.expiresAt > :now
     """)
     int invalidateActiveTokens(@Param("userId") UUID userId, @Param("now") Instant now);
 }

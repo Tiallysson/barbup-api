@@ -13,11 +13,11 @@ import java.util.UUID;
 public interface PasswordResetCodeRepository extends JpaRepository<PasswordResetCode, UUID> {
     @Modifying
     @Query("""
-        UPDATE password_reset_code c
-           SET c.consumed_at = :now
-         WHERE c.user_id = :userId
-           AND c.consumed_at IS NULL
-           AND c.expires_at > :now
+        UPDATE PasswordResetCode c
+               SET c.consumedAt = :now
+             WHERE c.user.id = :userId
+               AND c.consumedAt IS NULL
+               AND c.expiresAt > :now
     """)
     int invalidateActiveCodes(@Param("userId") UUID userId, @Param("now") Instant now);
 
