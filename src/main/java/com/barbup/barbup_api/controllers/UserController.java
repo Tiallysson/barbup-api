@@ -1,8 +1,9 @@
 package com.barbup.barbup_api.controllers;
 
-import com.barbup.barbup_api.domain.entity.user.dto.UpdateRequestDTO;
-import com.barbup.barbup_api.domain.entity.user.dto.UpdatedResponseDTO;
+import com.barbup.barbup_api.shared.dto.auth.UpdateRequestDTO;
+import com.barbup.barbup_api.shared.dto.auth.UpdatedResponseDTO;
 import com.barbup.barbup_api.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService service;
 
     @PutMapping("/update")
-    public ResponseEntity update(@RequestBody @Validated UpdateRequestDTO body) {
+    public ResponseEntity update(@RequestBody @Valid UpdateRequestDTO body) {
         var user = this.service.updateUser(body);
         return ResponseEntity.ok(new UpdatedResponseDTO(user));
     }

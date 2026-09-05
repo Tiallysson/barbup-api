@@ -1,11 +1,11 @@
 package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.entity.user.User;
-import com.barbup.barbup_api.domain.entity.user.dto.ConfirmEmailRequestDTO;
-import com.barbup.barbup_api.domain.entity.user.dto.RegisterRequestDTO;
-import com.barbup.barbup_api.exception.EmailAlreadyExistsException;
-import com.barbup.barbup_api.exception.EmailAlreadyVerifiedException;
-import com.barbup.barbup_api.exception.InvalidVerificationCodeException;
+import com.barbup.barbup_api.shared.dto.auth.ConfirmEmailRequestDTO;
+import com.barbup.barbup_api.shared.dto.auth.RegisterRequestDTO;
+import com.barbup.barbup_api.shared.exception.EmailAlreadyExistsException;
+import com.barbup.barbup_api.shared.exception.EmailAlreadyVerifiedException;
+import com.barbup.barbup_api.shared.exception.InvalidVerificationCodeException;
 import com.barbup.barbup_api.infra.services.EmailService;
 import com.barbup.barbup_api.infra.services.EmailTemplateRenderer;
 import com.barbup.barbup_api.repositories.UserRepository;

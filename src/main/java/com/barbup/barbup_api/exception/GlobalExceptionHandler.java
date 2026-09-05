@@ -1,7 +1,8 @@
 package com.barbup.barbup_api.exception;
 
-import com.barbup.barbup_api.domain.dto.ErrorResponseDTO;
-import com.barbup.barbup_api.domain.dto.ValidationErrorDetails;
+import com.barbup.barbup_api.shared.dto.ErrorResponseDTO;
+import com.barbup.barbup_api.shared.dto.ValidationErrorDetails;
+import com.barbup.barbup_api.shared.exception.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -116,5 +117,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleGeneric(Exception ex) {
         var error = new ErrorResponseDTO("Internal server error");
         return ResponseEntity.internalServerError().body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidResetCode(InvalidResetCodeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponseDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidResetToken(InvalidResetTokenException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponseDTO(ex.getMessage()));
     }
 }
