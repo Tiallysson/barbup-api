@@ -1,6 +1,6 @@
 package com.barbup.barbup_api.infra.security;
 
-import com.barbup.barbup_api.repositories.UserRepository;
+import com.barbup.barbup_api.infra.persistence.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

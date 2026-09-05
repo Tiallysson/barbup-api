@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.repositories;
+package com.barbup.barbup_api.infra.persistence;
 
 import com.barbup.barbup_api.domain.entity.password.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
