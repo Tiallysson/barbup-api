@@ -13,7 +13,6 @@ import com.barbup.barbup_api.infra.persistence.PasswordResetCodeRepository;
 import com.barbup.barbup_api.infra.persistence.PasswordResetTokenRepository;
 import com.barbup.barbup_api.infra.persistence.UserRepository;
 import jakarta.transaction.Transactional;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,15 +24,11 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
-
 
 @Service
 public class PasswordResetService {
     private static final Duration TTL = Duration.ofMinutes(15);
-    private final Logger log = (Logger) LoggerFactory.getLogger(PasswordResetService.class);
     private static final int MAX_ATTEMPTS = 5;
     private static final Duration TOKEN_TTL = Duration.ofMinutes(10);
 

@@ -8,6 +8,7 @@ import com.barbup.barbup_api.shared.exception.EmailAlreadyExistsException;
 import com.barbup.barbup_api.shared.exception.EmailAlreadyVerifiedException;
 import com.barbup.barbup_api.shared.exception.InvalidVerificationCodeException;
 import com.barbup.barbup_api.infra.persistence.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 public class AuthService {
     private static final SecureRandom CODE_GENERATOR = new SecureRandom();
@@ -41,6 +43,7 @@ public class AuthService {
         this.userRepository.save(user);
 
         eventPublisher.publishEvent(new UserCreatedEvent(user));
+        log.info("Message published");
 
         return user;
     }

@@ -119,12 +119,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.internalServerError().body(error);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(InvalidResetCodeException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidResetCode(InvalidResetCodeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponseDTO(ex.getMessage()));
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(InvalidResetTokenException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidResetToken(InvalidResetTokenException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponseDTO(ex.getMessage()));
     }
