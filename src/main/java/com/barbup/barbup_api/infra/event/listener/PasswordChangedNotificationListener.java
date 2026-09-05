@@ -1,9 +1,9 @@
-package com.barbup.barbup_api.listener;
+package com.barbup.barbup_api.infra.event.listener;
 
-import com.barbup.barbup_api.event.PasswordChangedEvent;
-import com.barbup.barbup_api.event.PasswordResetRequestedEvent;
-import com.barbup.barbup_api.infra.services.EmailService;
-import com.barbup.barbup_api.infra.services.EmailTemplateRenderer;
+import com.barbup.barbup_api.infra.event.PasswordChangedEvent;
+import com.barbup.barbup_api.infra.event.PasswordResetRequestedEvent;
+import com.barbup.barbup_api.infra.email.EmailService;
+import com.barbup.barbup_api.infra.email.EmailTemplateRenderer;
 import lombok.NoArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

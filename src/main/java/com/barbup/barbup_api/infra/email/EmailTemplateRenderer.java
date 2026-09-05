@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.infra.services;
+package com.barbup.barbup_api.infra.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

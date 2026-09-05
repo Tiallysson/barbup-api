@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.event;
+package com.barbup.barbup_api.infra.event;
 
 import com.barbup.barbup_api.domain.entity.user.User;
 
