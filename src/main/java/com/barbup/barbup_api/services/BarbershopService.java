@@ -2,7 +2,7 @@ package com.barbup.barbup_api.services;
 
 import com.barbup.barbup_api.domain.entity.address.Address;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
-import com.barbup.barbup_api.domain.entity.barbershop.dto.CreateBarbershopDTO;
+import com.barbup.barbup_api.shared.dto.barbershop.CreateBarbershopDTO;
 import com.barbup.barbup_api.domain.entity.barbershop.validation.Zipcode;
 import com.barbup.barbup_api.domain.entity.member.Member;
 import com.barbup.barbup_api.domain.entity.member.MemberRole;

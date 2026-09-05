@@ -1,6 +1,6 @@
 package com.barbup.barbup_api.infra.services;
 
-import com.barbup.barbup_api.exception.EmailSendException;
+import com.barbup.barbup_api.shared.exception.EmailSendException;
 import com.barbup.barbup_api.infra.config.MailjetProperties;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.errors.MailjetException;

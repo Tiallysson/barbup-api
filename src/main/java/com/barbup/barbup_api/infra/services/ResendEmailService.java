@@ -1,6 +1,6 @@
 package com.barbup.barbup_api.infra.services;
 
-import com.barbup.barbup_api.exception.EmailSendException;
+import com.barbup.barbup_api.shared.exception.EmailSendException;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
