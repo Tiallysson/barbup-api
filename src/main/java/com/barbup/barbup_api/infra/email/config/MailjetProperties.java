@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.infra.config;
+package com.barbup.barbup_api.infra.email.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
