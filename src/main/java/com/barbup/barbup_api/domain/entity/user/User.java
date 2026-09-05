@@ -1,7 +1,7 @@
 package com.barbup.barbup_api.domain.entity.user;
 
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
-import com.barbup.barbup_api.domain.entity.user.dto.RegisterRequestDTO;
+import com.barbup.barbup_api.shared.dto.auth.RegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

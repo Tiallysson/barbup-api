@@ -1,0 +1,18 @@
+package com.barbup.barbup_api.shared.dto.auth;
+
+import com.barbup.barbup_api.domain.entity.barbershop.validation.PhoneNumber;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record RegisterRequestDTO(
+        @NotBlank
+        String name,
+        @Email
+        @NotBlank
+        String email,
+        @PhoneNumber
+        @NotBlank
+        String phone,
+        @NotBlank
+        String password) {
+}
