@@ -24,7 +24,6 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.UUID;
 
 @Service
 public class PasswordResetService {
@@ -96,8 +95,8 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void resetPassword(String rawCode, String newPassword, UUID userId) {
-        PasswordResetToken token = tokenRepository.findByTokenHash(generator.hash(rawCode, userId))
+    public void resetPassword(String hashToken, String newPassword) {
+        PasswordResetToken token = tokenRepository.findByTokenHash(hashToken)
                 .filter(PasswordResetToken::isUsable)
                 .orElseThrow(InvalidResetTokenException::new);
 
