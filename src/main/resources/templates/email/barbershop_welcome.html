@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Confirme seu cadastro</title>
+    <title>Bem-vindo à Barbup</title>
     <!--[if !mso]><!-->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
@@ -13,7 +13,7 @@
 
 <!-- pré-visualização na caixa de entrada (não aparece no corpo) -->
 <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
-    Seu código de recuperação de senha do Barbup chegou.
+    Bem-vindo à Barbup! Sua barbearia foi criada com sucesso.
 </div>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
@@ -36,7 +36,7 @@
                                     style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
                                            font-size:28px; font-weight:bold; line-height:36px;
                                            letter-spacing:-0.5px; color:#1E293B; padding-bottom:24px;">
-                                    Bem-vindo ao Barbup
+                                    Bem-vindo à Barbup!
                                 </td>
                             </tr>
 
@@ -45,17 +45,19 @@
                                     style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
                                            font-size:17px; font-weight:normal; line-height:28px;
                                            color:#64748B; padding-bottom:48px;">
-                                    Olá, <span th:text="${username}">Fulano</span>!
-                                    Este é seu código de recuperação de senha.
+                                    Olá, <span th:text="${ownerName}">Fulano</span>!
+                                    Sua barbearia <strong th:text="${barbershopName}">Minha Barbearia</strong>
+                                    foi criada com sucesso na plataforma Barbup.
                                 </td>
                             </tr>
 
                             <tr>
-                                <td align="center" style="padding-bottom:16px;">
-                                    <span th:text="${verificationCode}"
-                                          style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-                                                 font-size:38px; font-weight:bold; line-height:46px;
-                                                 letter-spacing:8px; color:#1E293B;">000000</span>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:17px; font-weight:normal; line-height:28px;
+                                           color:#64748B; padding-bottom:48px;">
+                                    Você agora pode gerenciar agendamentos, barbeiros, serviços e muito mais
+                                    de forma simples e intuitiva.
                                 </td>
                             </tr>
 
@@ -64,7 +66,8 @@
                                     style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
                                            font-size:14px; line-height:22px; color:#94A3B8;
                                            padding-bottom:48px;">
-                                    Expira em <span th:text="${expirationMinutes}">15</span> minutos.
+                                    Barbearia criada em
+                                    <span th:text="${createdAt}">05/09/2026 às 14:32</span>.
                                 </td>
                             </tr>
 
@@ -72,9 +75,20 @@
                                 <td align="center"
                                     style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
                                            font-size:17px; line-height:28px; color:#64748B;
+                                           padding-bottom:48px;">
+                                    Próximos passos:
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="center"
+                                    style="font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                                           font-size:15px; line-height:26px; color:#64748B;
                                            padding-bottom:36px;">
-                                    Se você não solicitou a alteração da sua senha, pode ignorar este email
-                                    com segurança.
+                                    ✓ Adicione seus barbeiros<br>
+                                    ✓ Configure os serviços oferecidos<br>
+                                    ✓ Defina o horário de funcionamento<br>
+                                    ✓ Comece a receber agendamentos
                                 </td>
                             </tr>
 
@@ -96,7 +110,7 @@
                     <td align="center" style="padding:40px 0 0 0;
                                font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
                                font-size:14px; line-height:22px; color:#94A3B8;">
-                        Este é um email automático de recuperação de senha.
+                        Este é um email automático de boas-vindas.
                     </td>
                 </tr>
 

@@ -23,6 +23,8 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 @Service
@@ -114,8 +116,15 @@ public class PasswordResetService {
         tokenRepository.save(token);
         tokenRepository.invalidateActiveTokens(token.getUserId(), Instant.now());
 
+        String createdAt = Instant.now()
+                .atZone(ZoneId.of("America/Sao_Paulo"))
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
         eventPublisher.publishEvent(new PasswordChangedEvent(
-                user, user.getEmail(), user.getName()
+                user,
+                user.getEmail(),
+                user.getName(),
+                createdAt
         ));
     }
 

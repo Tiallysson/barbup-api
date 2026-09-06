@@ -13,7 +13,7 @@ public record BarbershopResponseDTO(
         String phone,
         String logoUrl,
         UUID userId,
-        Address addressId
+        Address address
 ) {
     public BarbershopResponseDTO(Barbershop barbershop) {
         this(
