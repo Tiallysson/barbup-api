@@ -14,8 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/barbershop")
@@ -23,6 +24,12 @@ import org.springframework.web.bind.annotation.*;
 public class BarbershopController {
     private final BarbershopService barbershopService;
     private final BusinessHoursService businessHoursService;
+
+    @GetMapping()
+    public ResponseEntity<List<BarbershopResponseDTO>> getBarbershop(@AuthenticationPrincipal User userAuthenticated) {
+        List<BarbershopResponseDTO> barbershopList = barbershopService.getList(userAuthenticated);
+        return ResponseEntity.ok(barbershopList);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<BarbershopResponseDTO> create(@RequestBody @Valid CreateBarbershopDTO body) {

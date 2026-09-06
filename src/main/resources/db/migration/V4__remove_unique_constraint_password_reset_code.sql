@@ -1,0 +1,1 @@
+ALTER TABLE password_reset_code DROP CONSTRAINT uk_password_reset_code_user;
