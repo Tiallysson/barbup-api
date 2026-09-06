@@ -32,6 +32,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/confirm-email").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/verify-code").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                         .requestMatchers(
                                 "/scalar.html",
                                 "/v3/api-docs/**"
