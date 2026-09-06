@@ -2,6 +2,7 @@ package com.barbup.barbup_api.controllers;
 
 import com.barbup.barbup_api.shared.dto.DefaultReponse;
 import com.barbup.barbup_api.shared.dto.password.ForgotPasswordRequest;
+import com.barbup.barbup_api.shared.dto.password.ResetPasswordRequest;
 import com.barbup.barbup_api.shared.dto.password.ResetTokenResponse;
 import com.barbup.barbup_api.shared.dto.password.VerifyCodeRequest;
 import com.barbup.barbup_api.domain.entity.user.User;
@@ -68,5 +69,11 @@ public class AuthController {
     public ResponseEntity<ResetTokenResponse> verifyCode(@RequestBody @Valid VerifyCodeRequest body) {
         String resetToken = passwordResetService.verifyCode(body.email(), body.code());
         return ResponseEntity.ok(new ResetTokenResponse(resetToken, 600));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordRequest body) {
+        passwordResetService.resetPassword(body.hashToken(), body.newPassword());
+        return ResponseEntity.noContent().build();
     }
 }
