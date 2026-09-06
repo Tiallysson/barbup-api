@@ -95,12 +95,12 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void resetPassword(String hashToken, String newPassword) {
-        PasswordResetToken token = tokenRepository.findByTokenHash(hashToken)
+    public void resetPassword(String rawToken, String email, String newPassword) {
+        PasswordResetToken token = tokenRepository.findByTokenHash(generator.sha256(rawToken))
                 .filter(PasswordResetToken::isUsable)
                 .orElseThrow(InvalidResetTokenException::new);
 
-        User user = userRepository.findById(token.getUserId())
+        User user = userRepository.findByIdAndEmail(token.getUserId(), email)
                 .orElseThrow(InvalidResetTokenException::new);
 
         if (passwordEncoder.matches(newPassword, user.getPassword())) {

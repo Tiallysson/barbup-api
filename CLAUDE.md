@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Barbup API is a Spring Boot 4.1.0 (Java 17) REST backend for a barbershop management/booking product. It uses Maven, Spring Data JPA (PostgreSQL, via Supabase), Spring Security with stateless JWT auth, and springdoc-openapi (JSON generation only) with a static Scalar page for API docs.
+Barbup API is a Spring Boot 4.1.0 (Java 25) REST backend for a barbershop management/booking product. It uses Maven, Spring Data JPA (PostgreSQL, via Supabase), Spring Security with stateless JWT auth, and springdoc-openapi (JSON generation only) with a static Scalar page for API docs.
 
 Note: the Maven `groupId`/base package is `com.barbup.barbup_api` (underscore) instead of `com.barbup.barbup-api`, because hyphens are invalid in Java package names — this is intentional, not a typo, per `HELP.md`.
 
