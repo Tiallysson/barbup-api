@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ServiceRegister(
+        @NotNull
         UUID barbershopId,
         @NotBlank
         String name,
