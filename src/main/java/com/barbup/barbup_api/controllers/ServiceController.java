@@ -21,9 +21,9 @@ import java.util.UUID;
 public class ServiceController {
     private final ServiceService serviceService;
 
-    @GetMapping()
-    public ResponseEntity<List<ServiceResponse>> getServices(@RequestBody @Valid UUID barbershopId) {
-        List<ServiceResponse> services = serviceService.getServices(barbershopId);
+    @GetMapping("/by-barbershop/{id}")
+    public ResponseEntity<List<ServiceResponse>> getServices(@PathVariable UUID id) {
+        List<ServiceResponse> services = serviceService.getServices(id);
         return ResponseEntity.status(HttpStatus.OK).body(services);
     }
 

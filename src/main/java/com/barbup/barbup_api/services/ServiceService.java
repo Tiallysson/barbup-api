@@ -9,6 +9,7 @@ import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.infra.persistence.BarbershopRepository;
 import com.barbup.barbup_api.infra.persistence.MemberRepository;
 import com.barbup.barbup_api.infra.persistence.ServiceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,7 +30,8 @@ public class ServiceService {
     private MemberRepository memberRepository;
 
     public ServiceResponse createService(ServiceRegister register, User authenticatedUser) {
-        Barbershop barbershop = barbershopRepository.getReferenceById(register.barbershopId());
+        Barbershop barbershop = barbershopRepository.findById(register.barbershopId())
+                .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
 
         boolean isMember = memberRepository.existsByBarbershopIdAndUserId(barbershop.getId(), authenticatedUser.getId());
         if (!isMember) {
@@ -56,14 +58,13 @@ public class ServiceService {
     }
 
     public ServiceResponse updateService(ServiceUpdate register, User authenticatedUser) {
-        Barbershop barbershop = barbershopRepository.getReferenceById(register.barbershopId());
+        Services services = serviceRepository.findById(register.id())
+                .orElseThrow(() -> new EntityNotFoundException("Service not found"));
 
-        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(barbershop.getId(), authenticatedUser.getId());
-        if (!isMember) {
+        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(services.getBarbershop().getId(), authenticatedUser.getId());
+        if (!isMember)
             throw new AccessDeniedException("User is not a member of this barbershop");
-        }
 
-        Services services = serviceRepository.getReferenceById(register.id());
         services.setName(register.name());
         services.setPrice(register.price());
         services.setDurationMinutes(register.durationMinutes());
@@ -81,7 +82,8 @@ public class ServiceService {
     }
 
     public boolean deleteService(UUID id, User authenticatedUser) {
-        Services services = serviceRepository.getReferenceById(id);
+        Services services = serviceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Service not found"));
 
         boolean isMember = memberRepository.existsByBarbershopIdAndUserId(services.getBarbershop().getId(), authenticatedUser.getId());
         if (!isMember)

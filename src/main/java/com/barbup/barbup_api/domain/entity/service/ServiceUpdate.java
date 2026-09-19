@@ -9,8 +9,6 @@ import java.util.UUID;
 public record ServiceUpdate(
         @NotNull
         UUID id,
-        @NotNull
-        UUID barbershopId,
         @NotBlank
         String name,
         @NotBlank
