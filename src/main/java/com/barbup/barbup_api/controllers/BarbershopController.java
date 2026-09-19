@@ -1,6 +1,9 @@
 package com.barbup.barbup_api.controllers;
 
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
+import com.barbup.barbup_api.domain.entity.service.ServiceRegister;
+import com.barbup.barbup_api.domain.entity.service.ServiceResponse;
+import com.barbup.barbup_api.services.ServiceService;
 import com.barbup.barbup_api.shared.dto.barbershop.BarbershopResponseDTO;
 import com.barbup.barbup_api.shared.dto.barbershop.CreateBarbershopDTO;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
@@ -17,13 +20,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/barbershop")
 @RequiredArgsConstructor
 public class BarbershopController {
     private final BarbershopService barbershopService;
-    private final BusinessHoursService businessHoursService;
 
     @GetMapping()
     public ResponseEntity<List<BarbershopResponseDTO>> getBarbershop(@AuthenticationPrincipal User userAuthenticated) {
@@ -34,12 +37,6 @@ public class BarbershopController {
     @PostMapping("/create")
     public ResponseEntity<BarbershopResponseDTO> create(@RequestBody @Valid CreateBarbershopDTO body) {
         Barbershop barbershop = barbershopService.createBarbershop(body);
-        return ResponseEntity.ok(new BarbershopResponseDTO(barbershop));
-    }
-
-    @PostMapping("/hours")
-    public ResponseEntity<BusinessHourResponseDTO> createHours(@RequestBody @Valid BusinessHourDto body, @AuthenticationPrincipal User userAuthenticated) {
-        BusinessHours businessHours = businessHoursService.createBusinessHour(body, userAuthenticated);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BusinessHourResponseDTO(businessHours));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BarbershopResponseDTO(barbershop));
     }
 }
