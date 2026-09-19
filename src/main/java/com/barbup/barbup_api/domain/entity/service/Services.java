@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service extends BaseEntity {
+public class Services extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "barbershop_id", nullable = false)
     private Barbershop barbershop;

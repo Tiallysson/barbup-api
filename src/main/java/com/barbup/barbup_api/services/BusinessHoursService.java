@@ -4,6 +4,7 @@ import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourDto;
 import com.barbup.barbup_api.domain.entity.user.User;
+import com.barbup.barbup_api.shared.dto.schedule.BusinessHourResponseDTO;
 import com.barbup.barbup_api.shared.exception.BusinessHourConflictException;
 import com.barbup.barbup_api.shared.exception.InvalidBusinessHourException;
 import com.barbup.barbup_api.infra.persistence.BarbershopRepository;
@@ -13,6 +14,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BusinessHoursService {
@@ -48,5 +53,19 @@ public class BusinessHoursService {
         businessHours.setCloseTime(dto.closeTime());
 
         return businessHoursRepository.save(businessHours);
+    }
+
+    public List<BusinessHourResponseDTO> getByBarbershopId(UUID id) {
+        List<BusinessHours> hours = businessHoursRepository.findAllByBarbershopId(id).orElseThrow();
+
+        return hours.stream()
+                .map(p -> new BusinessHourResponseDTO(
+                        p.getId(),
+                        p.getBarbershop().getId(),
+                        p.getDayOfWeek(),
+                        p.getOpenTime(),
+                        p.getCloseTime())
+                )
+                .collect(Collectors.toList());
     }
 }

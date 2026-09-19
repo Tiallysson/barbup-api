@@ -3,7 +3,7 @@ package com.barbup.barbup_api.domain.entity.appointment;
 import com.barbup.barbup_api.domain.abstracts.BaseEntity;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.member.Member;
-import com.barbup.barbup_api.domain.entity.service.Service;
+import com.barbup.barbup_api.domain.entity.service.Services;
 import com.barbup.barbup_api.domain.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ public class Appointment extends BaseEntity {
     private User client;
 
     @ManyToOne @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private Services service;
 
     @Column(nullable = false)
     private Instant scheduledAt;
