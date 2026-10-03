@@ -9,6 +9,8 @@ import com.barbup.barbup_api.shared.exception.InvalidResetCodeException;
 import com.barbup.barbup_api.shared.exception.InvalidResetTokenException;
 import com.barbup.barbup_api.shared.exception.SamePasswordException;
 import com.barbup.barbup_api.infra.security.ResetCodeGenerator;
+import com.barbup.barbup_api.infra.ratelimit.RateLimitPlan;
+import com.barbup.barbup_api.infra.ratelimit.RateLimiter;
 import com.barbup.barbup_api.infra.persistence.PasswordResetCodeRepository;
 import com.barbup.barbup_api.infra.persistence.PasswordResetTokenRepository;
 import com.barbup.barbup_api.infra.persistence.UserRepository;
@@ -26,6 +28,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 public class PasswordResetService {
@@ -40,29 +43,37 @@ public class PasswordResetService {
     private final ResetCodeGenerator generator;
     private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
+    private final RateLimiter rateLimiter;
 
-    public PasswordResetService(UserRepository userRepository, PasswordResetCodeRepository codeRepository, PasswordResetTokenRepository tokenRepository, ResetCodeGenerator generator, ApplicationEventPublisher eventPublisher, PasswordEncoder passwordEncoder) {
+    public PasswordResetService(UserRepository userRepository, PasswordResetCodeRepository codeRepository, PasswordResetTokenRepository tokenRepository, ResetCodeGenerator generator, ApplicationEventPublisher eventPublisher, PasswordEncoder passwordEncoder, RateLimiter rateLimiter) {
         this.userRepository = userRepository;
         this.codeRepository = codeRepository;
         this.tokenRepository = tokenRepository;
         this.generator = generator;
         this.eventPublisher = eventPublisher;
         this.passwordEncoder = passwordEncoder;
+        this.rateLimiter = rateLimiter;
     }
 
     @Transactional
     public void requestReset(String email) {
-        User user = userRepository.findByEmail(email)
+
+        //TODO: access token curto (5–15 min) + refresh token opaco persistido e revogável. Gerenciar sessões.
+
+        if (!rateLimiter.allow(RateLimitPlan.FORGOT_PASSWORD_EMAIL, email))
+            return;
+
+        userRepository.findByEmail(email)
                 .map(userDetails -> (User) userDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .ifPresent( user -> {
+                    codeRepository.invalidateActiveCodes(user.getId(), Instant.now());
 
-        codeRepository.invalidateActiveCodes(user.getId(), Instant.now());
+                    String code = generator.generate();
+                    String codeHash = generator.hash(code, user.getId());
+                    codeRepository.save(new PasswordResetCode(user, codeHash, TTL));
 
-        String code = generator.generate();
-        String codeHash = generator.hash(code, user.getId());
-        codeRepository.save(new PasswordResetCode(user, codeHash, TTL));
-
-        eventPublisher.publishEvent(new PasswordResetRequestedEvent(user, email, user.getUsername(), code, TTL));
+                    eventPublisher.publishEvent(new PasswordResetRequestedEvent(user, email, user.getName(), code, TTL));
+                });
     }
 
     @Transactional

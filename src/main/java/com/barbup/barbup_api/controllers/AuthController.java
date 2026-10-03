@@ -9,6 +9,7 @@ import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.shared.dto.auth.ConfirmEmailRequestDTO;
 import com.barbup.barbup_api.shared.dto.auth.LoginRequestDTO;
 import com.barbup.barbup_api.shared.dto.auth.RegisterRequestDTO;
+import com.barbup.barbup_api.shared.dto.auth.ResendVerificationRequestDTO;
 import com.barbup.barbup_api.shared.dto.auth.ResponseDTO;
 import com.barbup.barbup_api.shared.dto.auth.UserCreatedResponseDTO;
 import com.barbup.barbup_api.infra.security.TokenService;
@@ -16,7 +17,6 @@ import com.barbup.barbup_api.services.PasswordResetService;
 import com.barbup.barbup_api.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,8 +32,7 @@ public class AuthController {
     private final AuthService authService;
     private final TokenService tokenService;
     private final PasswordResetService passwordResetService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid LoginRequestDTO body) {
@@ -62,7 +61,8 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<DefaultReponse> forgotPassword(@RequestBody @Valid ForgotPasswordRequest body) {
         passwordResetService.requestReset(body.email());
-        return ResponseEntity.ok(new DefaultReponse("Sent with successful"));
+        return ResponseEntity.accepted()
+                .body(new DefaultReponse("If the email is registered and not yet verified, a new code will be sent."));
     }
 
     @PostMapping("/verify-code")
@@ -75,5 +75,12 @@ public class AuthController {
     public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordRequest body) {
         passwordResetService.resetPassword(body.rawToken(), body.email(), body.newPassword());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<DefaultReponse> resendVerification(@RequestBody @Valid ResendVerificationRequestDTO body) {
+        this.authService.resendVerification(body.email());
+        return ResponseEntity.accepted()
+                .body(new DefaultReponse("If the email is registered and not yet verified, a new code will be sent."));
     }
 }

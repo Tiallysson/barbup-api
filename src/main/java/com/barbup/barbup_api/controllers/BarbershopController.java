@@ -35,8 +35,8 @@ public class BarbershopController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BarbershopResponseDTO> create(@RequestBody @Valid CreateBarbershopDTO body) {
-        Barbershop barbershop = barbershopService.createBarbershop(body);
+    public ResponseEntity<BarbershopResponseDTO> create(@RequestBody @Valid CreateBarbershopDTO body, @AuthenticationPrincipal User authenticatedUser) {
+        Barbershop barbershop = barbershopService.createBarbershop(body, authenticatedUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BarbershopResponseDTO(barbershop));
     }
 }

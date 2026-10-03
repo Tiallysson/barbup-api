@@ -1,5 +1,6 @@
 package com.barbup.barbup_api.services;
 
+import lombok.RequiredArgsConstructor;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.service.ServiceRegister;
 import com.barbup.barbup_api.domain.entity.service.ServiceResponse;
@@ -7,12 +8,10 @@ import com.barbup.barbup_api.domain.entity.service.ServiceUpdate;
 import com.barbup.barbup_api.domain.entity.service.Services;
 import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.infra.persistence.BarbershopRepository;
-import com.barbup.barbup_api.infra.persistence.MemberRepository;
 import com.barbup.barbup_api.infra.persistence.ServiceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -21,22 +20,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ServiceService {
-    @Autowired
-    private BarbershopRepository barbershopRepository;
-    @Autowired
-    private ServiceRepository serviceRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+    private final BarbershopRepository barbershopRepository;
+    private final ServiceRepository serviceRepository;
 
+    @PreAuthorize("@barbershopAccess.canManage(#register.barbershopId(), principal)")
     public ServiceResponse createService(ServiceRegister register, User authenticatedUser) {
         Barbershop barbershop = barbershopRepository.findById(register.barbershopId())
                 .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
-
-        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(barbershop.getId(), authenticatedUser.getId());
-        if (!isMember) {
-            throw new AccessDeniedException("User is not a member of this barbershop");
-        }
 
         Services service = new Services();
         service.setBarbershop(barbershop);
@@ -57,13 +49,10 @@ public class ServiceService {
                 );
     }
 
+    @PreAuthorize("@barbershopAccess.canManageService(#register.id(), principal)")
     public ServiceResponse updateService(ServiceUpdate register, User authenticatedUser) {
         Services services = serviceRepository.findById(register.id())
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
-
-        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(services.getBarbershop().getId(), authenticatedUser.getId());
-        if (!isMember)
-            throw new AccessDeniedException("User is not a member of this barbershop");
 
         services.setName(register.name());
         services.setPrice(register.price());
@@ -81,13 +70,10 @@ public class ServiceService {
         );
     }
 
+    @PreAuthorize("@barbershopAccess.canManageService(#id, principal)")
     public boolean deleteService(UUID id, User authenticatedUser) {
         Services services = serviceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
-
-        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(services.getBarbershop().getId(), authenticatedUser.getId());
-        if (!isMember)
-            throw new AccessDeniedException("User is not a member of this barbershop");
 
         services.delete();
         serviceRepository.save(services);

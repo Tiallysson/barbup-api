@@ -1,5 +1,6 @@
 package com.barbup.barbup_api.services;
 
+import lombok.RequiredArgsConstructor;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourDto;
@@ -9,10 +10,8 @@ import com.barbup.barbup_api.shared.exception.BusinessHourConflictException;
 import com.barbup.barbup_api.shared.exception.InvalidBusinessHourException;
 import com.barbup.barbup_api.infra.persistence.BarbershopRepository;
 import com.barbup.barbup_api.infra.persistence.BusinessHoursRepository;
-import com.barbup.barbup_api.infra.persistence.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,22 +19,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BusinessHoursService {
-    @Autowired
-    private BusinessHoursRepository businessHoursRepository;
-    @Autowired
-    private BarbershopRepository barbershopRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+    private final BusinessHoursRepository businessHoursRepository;
+    private final BarbershopRepository barbershopRepository;
 
+    @PreAuthorize("@barbershopAccess.canManage(#dto.barbershopId(), principal)")
     public BusinessHours createBusinessHour(BusinessHourDto dto, User authenticatedUser) {
         Barbershop barbershop = barbershopRepository.findById(dto.barbershopId())
                 .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
-
-        boolean isMember = memberRepository.existsByBarbershopIdAndUserId(barbershop.getId(), authenticatedUser.getId());
-        if (!isMember) {
-            throw new AccessDeniedException("User is not a member of this barbershop");
-        }
 
         if (!dto.openTime().isBefore(dto.closeTime())) {
             throw new InvalidBusinessHourException("Open time must be before close time");
