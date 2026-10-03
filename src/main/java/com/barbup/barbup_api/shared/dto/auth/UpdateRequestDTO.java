@@ -8,12 +8,7 @@ import java.util.UUID;
 
 public record UpdateRequestDTO(
         @NotBlank
-        UUID id,
-        @NotBlank
         String name,
-        @Email
-        @NotBlank
-        String email,
         @PhoneNumber
         @NotBlank
         String phone) {

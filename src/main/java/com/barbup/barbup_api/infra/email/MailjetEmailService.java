@@ -13,6 +13,7 @@ import com.mailjet.client.transactional.response.SendEmailError;
 import com.mailjet.client.transactional.response.SendEmailsResponse;
 import com.mailjet.client.transactional.response.SentMessageStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.email.provider", havingValue = "mailjet", matchIfMissing = true)
 public class MailjetEmailService implements EmailService {
     private final MailjetClient mailjetClient;
     private final MailjetProperties properties;

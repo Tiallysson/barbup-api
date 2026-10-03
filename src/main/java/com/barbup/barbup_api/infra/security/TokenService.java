@@ -8,14 +8,21 @@ import com.barbup.barbup_api.domain.entity.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
-    @Value("${api.security.token.secret}")
-    private String secret;
+    private static final Duration TOKEN_TTL = Duration.ofHours(2);
+
+    private final String secret;
+
+    public TokenService(@Value("${api.security.token.secret}") String secret) {
+        this.secret = secret;
+    }
+
     public String generateToken(User user, Instant expiresAt) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -47,6 +54,6 @@ public class TokenService {
     }
 
     public Instant generateExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-3"));
+        return Instant.now().plus(TOKEN_TTL);
     }
 }

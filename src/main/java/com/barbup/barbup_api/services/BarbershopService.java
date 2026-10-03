@@ -18,7 +18,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -32,28 +31,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BarbershopService {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    private BarbershopRepository barbershopRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private final UserRepository userRepository;
+    private final BarbershopRepository barbershopRepository;
+    private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final AddressMapper addressMapper;
     private final BarbershopMapper barbershopMapper;
 
-    public Barbershop createBarbershop(CreateBarbershopDTO dto) {
+    public Barbershop createBarbershop(CreateBarbershopDTO dto, User authenticatedUser) {
         User owner;
 
-        if (dto.userId() == null) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            owner = (User) authentication.getPrincipal();
-        } else {
-            owner = userRepository.findById(dto.userId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        }
+
+        owner = userRepository.findById(authenticatedUser.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Address address = addressMapper.toEntity(dto.address());
         Barbershop barbershop = barbershopMapper.toEntity(dto, owner);

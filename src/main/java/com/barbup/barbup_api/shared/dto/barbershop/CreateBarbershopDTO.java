@@ -23,7 +23,6 @@ public record CreateBarbershopDTO(
         @NotBlank
         String phone,
         String logoUrl,
-        UUID userId,
         @NotNull(message = "Address cannot possible null")
         @Valid
         AddressDto address

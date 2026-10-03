@@ -6,11 +6,14 @@ import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.email.provider", havingValue = "resend")
 public class ResendEmailService implements EmailService {
     private final Resend resend;
 

@@ -4,6 +4,8 @@ import com.barbup.barbup_api.infra.email.EmailService;
 import com.barbup.barbup_api.infra.email.EmailTemplateRenderer;
 import com.barbup.barbup_api.infra.event.PasswordResetRequestedEvent;
 import com.barbup.barbup_api.infra.event.UserCreatedEvent;
+import com.barbup.barbup_api.infra.event.VerificationCodeRequestedEvent;
+import com.barbup.barbup_api.domain.entity.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -30,17 +32,26 @@ public class UserCreatedNotificationListener {
     @Async
     @EventListener
     public void on(UserCreatedEvent event) {
+        sendVerificationEmail(event.user());
+    }
+
+    @Async
+    @EventListener
+    public void on(VerificationCodeRequestedEvent event) {
+        sendVerificationEmail(event.user());
+    }
+
+    private void sendVerificationEmail(User user) {
         try {
             String htmlBody = renderer.render("email/verification", Map.of(
-                    "username", event.user().getName(),
-                    "verificationCode", event.user().getVerificationCode(),
+                    "username", user.getName(),
+                    "verificationCode", user.getVerificationCode(),
                     "expirationMinutes", VERIFICATION_CODE_VALIDITY_MINUTES
             ));
 
-            emailService.sendMail(event.user().getEmail(), SUBJECT, htmlBody);
+            emailService.sendMail(user.getEmail(), SUBJECT, htmlBody);
         } catch (Exception e) {
             log.error("Error while send email. {}", e.getMessage());
         }
-
     }
 }
