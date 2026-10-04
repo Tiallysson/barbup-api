@@ -14,9 +14,9 @@ import java.time.LocalTime;
 @Entity
 @Table(
         name = "business_hours",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_business_hours_barbershop_day",
-                columnNames = {"barbershop_id", "day_of_week"}
+        indexes = @Index(
+                name = "idx_business_hours_barbershop_day",
+                columnList = "barbershop_id, day_of_week"
         )
 )
 @Getter

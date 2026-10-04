@@ -14,7 +14,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,18 +33,10 @@ public class BusinessHoursService {
             throw new InvalidBusinessHourException("Open time must be before close time");
         }
 
-        businessHoursRepository.findByBarbershopIdAndDayOfWeek(barbershop.getId(), dto.dayOfWeek())
-                .ifPresent(existing -> {
-                    LocalTime newOpenTime = dto.openTime();
-                    LocalTime newCloseTime = dto.closeTime();
-
-                    boolean hasConflict = newOpenTime.isBefore(existing.getCloseTime()) &&
-                            newCloseTime.isAfter(existing.getOpenTime());
-
-                    if (hasConflict) {
-                        throw new BusinessHourConflictException(dto.dayOfWeek());
-                    }
-                });
+        if (businessHoursRepository.existsOverlapping(
+                barbershop.getId(), dto.dayOfWeek(), dto.openTime(), dto.closeTime())) {
+            throw new BusinessHourConflictException(dto.dayOfWeek());
+        }
 
         BusinessHours businessHours = new BusinessHours();
         businessHours.setBarbershop(barbershop);
