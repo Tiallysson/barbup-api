@@ -12,8 +12,6 @@ public record BusinessHourUpdateDTO(
         @NotNull
         UUID barbershopId,
         @NotNull
-        DayOfWeek dayOfWeek,
-        @NotNull
         LocalTime openTime,
         @NotNull
         LocalTime closeTime
