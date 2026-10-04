@@ -89,7 +89,8 @@ public class BarbershopService {
         barbershop.setName(dto.name());
         barbershop.setSlug(dto.slug());
         barbershop.setPhone(dto.phone());
-        barbershop.setLogoUrl(dto.logoUrl());
+        if (dto.logoUrl() != null && !dto.logoUrl().isBlank())
+            barbershop.setLogoUrl(dto.logoUrl());
         addressMapper.updateEntity(dto.address(), barbershop.getAddress());
 
         Barbershop saved = barbershopRepository.save(barbershop);
