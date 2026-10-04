@@ -24,5 +24,19 @@ public interface BusinessHoursRepository extends JpaRepository<BusinessHours, UU
                               @Param("openTime") LocalTime openTime,
                               @Param("closeTime") LocalTime closeTime);
 
+    @Query("""
+            SELECT COUNT(b) > 0 FROM BusinessHours b
+            WHERE b.barbershop.id = :barbershopId
+              AND b.dayOfWeek = :dayOfWeek
+              AND b.id  <> :excludeId
+              AND b.openTime < :closeTime
+              AND b.closeTime > :openTime
+            """)
+    boolean existsOverlappingExcluding(@Param("barbershopId") UUID barbershopId,
+                                       @Param("dayOfWeek") DayOfWeek dayOfWeek,
+                                       @Param("openTime") LocalTime openTime,
+                                       @Param("closeTime") LocalTime closeTime,
+                                       @Param("excludeId") UUID excludeId);
+
     Optional<List<BusinessHours>> findAllByBarbershopId(UUID barbershopId);
 }
