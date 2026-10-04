@@ -33,10 +33,10 @@ public class BusinessHoursService {
             throw new InvalidBusinessHourException("Open time must be before close time");
         }
 
-        businessHoursRepository.findByBarbershopIdAndDayOfWeek(barbershop.getId(), dto.dayOfWeek())
-                .ifPresent(existing -> {
-                    throw new BusinessHourConflictException(dto.dayOfWeek());
-                });
+        if (businessHoursRepository.existsOverlapping(
+                barbershop.getId(), dto.dayOfWeek(), dto.openTime(), dto.closeTime())) {
+            throw new BusinessHourConflictException(dto.dayOfWeek());
+        }
 
         BusinessHours businessHours = new BusinessHours();
         businessHours.setBarbershop(barbershop);
