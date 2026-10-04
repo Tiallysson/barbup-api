@@ -33,4 +33,7 @@ public class Barbershop extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    @Column(nullable = false, length = 64)
+    private String timeZone = "America/Sao_Paulo";
 }

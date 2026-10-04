@@ -23,6 +23,7 @@ public interface BarbershopMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "timeZone", ignore = true)
     @Mapping(target = "owner", source = "owner")
     Barbershop toEntity(CreateBarbershopDTO dto, User owner);
 

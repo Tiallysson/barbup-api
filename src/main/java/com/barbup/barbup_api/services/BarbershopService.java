@@ -60,7 +60,7 @@ public class BarbershopService {
         this.memberRepository.save(m);
 
         String createdAt = barbershop.getCreatedAt()
-                        .atZone(ZoneId.of("America/Sao_Paulo"))
+                        .atZone(ZoneId.of(barbershop.getTimeZone()))
                                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
         eventPublisher.publishEvent(new BarbershopCreatedEvent(

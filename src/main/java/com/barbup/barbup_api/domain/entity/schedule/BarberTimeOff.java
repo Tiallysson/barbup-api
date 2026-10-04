@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "barber_time_off")
@@ -22,9 +22,9 @@ public class BarberTimeOff extends BaseEntity {
     private Member barber;
 
     @Column(nullable = false)
-    private LocalDateTime startAt;
+    private Instant startAt;
     @Column(nullable = false)
-    private LocalDateTime endAt;
+    private Instant endAt;
     @Column(nullable = false)
     private String reason;
 }

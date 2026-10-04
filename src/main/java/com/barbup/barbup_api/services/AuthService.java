@@ -19,15 +19,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private static final SecureRandom CODE_GENERATOR = new SecureRandom();
-    private static final long VERIFICATION_CODE_VALIDITY_MINUTES = 15;
-    private static final long RESEND_COOLDOWN_SECONDS = 60;
+    private static final Duration VERIFICATION_CODE_VALIDITY = Duration.ofMinutes(15);
+    private static final Duration RESEND_COOLDOWN = Duration.ofSeconds(60);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,7 +42,7 @@ public class AuthService {
         User user = new User(body);
         user.setPassword(passwordEncoder.encode(body.password()));
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(VERIFICATION_CODE_VALIDITY_MINUTES));
+        user.setVerificationCodeExpiresAt(Instant.now().plus(VERIFICATION_CODE_VALIDITY));
 
         this.userRepository.save(user);
 
@@ -60,7 +61,7 @@ public class AuthService {
 
         boolean codeMatches = user.getVerificationCode() != null && user.getVerificationCode().equals(body.code());
         boolean codeExpired = user.getVerificationCodeExpiresAt() == null
-                || user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now());
+                || user.getVerificationCodeExpiresAt().isBefore(Instant.now());
 
         if (!codeMatches || codeExpired)
             throw new InvalidVerificationCodeException();
@@ -82,7 +83,7 @@ public class AuthService {
                 .filter(this::cooldownElapsed)
                 .ifPresent(user -> {
                     user.setVerificationCode(generateVerificationCode());
-                    user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(VERIFICATION_CODE_VALIDITY_MINUTES));
+                    user.setVerificationCodeExpiresAt(Instant.now().plus(VERIFICATION_CODE_VALIDITY));
                     this.userRepository.save(user);
 
                     eventPublisher.publishEvent(new VerificationCodeRequestedEvent(user));
@@ -93,8 +94,8 @@ public class AuthService {
         if (user.getVerificationCodeExpiresAt() == null)
             return true;
 
-        LocalDateTime lastSentAt = user.getVerificationCodeExpiresAt().minusMinutes(VERIFICATION_CODE_VALIDITY_MINUTES);
-        return LocalDateTime.now().isAfter(lastSentAt.plusSeconds(RESEND_COOLDOWN_SECONDS));
+        Instant lastSentAt = user.getVerificationCodeExpiresAt().minus(VERIFICATION_CODE_VALIDITY);
+        return Instant.now().isAfter(lastSentAt.plus(RESEND_COOLDOWN));
     }
 
     private String generateVerificationCode() {
