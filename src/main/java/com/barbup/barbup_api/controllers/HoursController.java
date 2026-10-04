@@ -5,6 +5,7 @@ import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.services.BusinessHoursService;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourDto;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourResponseDTO;
+import com.barbup.barbup_api.shared.dto.schedule.BusinessHourUpdateDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,12 @@ public class HoursController {
     @GetMapping("/{id}")
     public ResponseEntity<List<BusinessHourResponseDTO>> getBarbershopServiceHour(@PathVariable UUID id) {
         List<BusinessHourResponseDTO> hours = businessHoursService.getByBarbershopId(id);
+        return ResponseEntity.ok(hours);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<List<BusinessHourResponseDTO>> updateBusinessHour(@RequestBody @Valid BusinessHourUpdateDTO body) {
+        List<BusinessHourResponseDTO> hours = businessHoursService.updateBusinessHours(body);
         return ResponseEntity.ok(hours);
     }
 }

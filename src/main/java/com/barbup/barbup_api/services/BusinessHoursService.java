@@ -1,5 +1,6 @@
 package com.barbup.barbup_api.services;
 
+import com.barbup.barbup_api.shared.dto.schedule.BusinessHourUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
@@ -48,9 +49,42 @@ public class BusinessHoursService {
     }
 
     public List<BusinessHourResponseDTO> getByBarbershopId(UUID id) {
-        List<BusinessHours> hours = businessHoursRepository.findAllByBarbershopId(id).orElseThrow();
+        List<BusinessHours> hours = businessHoursRepository.findAllByBarbershopId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Business hour not found"));
 
         return hours.stream()
+                .map(p -> new BusinessHourResponseDTO(
+                        p.getId(),
+                        p.getBarbershop().getId(),
+                        p.getDayOfWeek(),
+                        p.getOpenTime(),
+                        p.getCloseTime())
+                )
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("@barbershopAccess.canManageBusinessHour(#body.id(), principal)")
+    public List<BusinessHourResponseDTO> updateBusinessHours(BusinessHourUpdateDTO body) {
+        BusinessHours hours = businessHoursRepository.findById(body.id())
+                .orElseThrow(() -> new EntityNotFoundException("Business hour not found"));
+
+        if (!body.openTime().isBefore(body.closeTime()))
+            throw new InvalidBusinessHourException("Open time must be before close time");
+
+        UUID barbershopId = hours.getBarbershop().getId();
+
+        if (businessHoursRepository.existsOverlappingExcluding(barbershopId, hours.getDayOfWeek(), body.openTime(), body.closeTime(), hours.getId()))
+            throw new BusinessHourConflictException(hours.getDayOfWeek());
+
+        hours.setOpenTime(body.openTime());
+        hours.setCloseTime(body.closeTime());
+
+        businessHoursRepository.save(hours);
+
+        List<BusinessHours> barbershopHours = businessHoursRepository.findAllByBarbershopId(barbershopId)
+                .orElseThrow();
+
+        return barbershopHours.stream()
                 .map(p -> new BusinessHourResponseDTO(
                         p.getId(),
                         p.getBarbershop().getId(),

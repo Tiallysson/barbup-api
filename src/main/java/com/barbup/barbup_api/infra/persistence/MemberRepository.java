@@ -25,4 +25,16 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
     boolean existsByServiceIdAndUserIdAndRoleIn(@Param("serviceId") UUID serviceId,
                                                 @Param("userId") UUID userId,
                                                 @Param("roles") Collection<MemberRole> roles);
+
+    @Query("""
+            select count(m) > 0
+            from Member m, BusinessHours b
+            where b.id = :businessHourId
+            and m.barbershop = b.barbershop
+            and m.user.id = :userId
+            and m.role in :roles
+            """)
+    boolean existsByBusinessHourIdAndUserIdAndRoleIn(@Param("businessHourId") UUID businessHourId,
+                                                     @Param("userId") UUID userId,
+                                                     @Param("roles")Collection<MemberRole> roles);
 }

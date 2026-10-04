@@ -40,4 +40,11 @@ public class BarbershopAccess {
         }
         return memberRepository.existsByBarbershopIdAndUserIdAndRoleIn(barbershopId, user.getId(), roles);
     }
+
+    public boolean canManageBusinessHour(UUID businessHourId, Object principal) {
+        if (businessHourId == null || !(principal instanceof User user)) {
+            return false;
+        }
+        return memberRepository.existsByBusinessHourIdAndUserIdAndRoleIn(businessHourId, user.getId(), MANAGERS);
+    }
 }
