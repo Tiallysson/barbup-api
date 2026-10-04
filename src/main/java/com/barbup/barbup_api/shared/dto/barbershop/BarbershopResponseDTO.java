@@ -13,7 +13,8 @@ public record BarbershopResponseDTO(
         String phone,
         String logoUrl,
         UUID userId,
-        Address address
+        Address address,
+        String timeZone
 ) {
     public BarbershopResponseDTO(Barbershop barbershop) {
         this(
@@ -24,7 +25,8 @@ public record BarbershopResponseDTO(
                 barbershop.getPhone(),
                 barbershop.getLogoUrl(),
                 barbershop.getOwner().getId(),
-                barbershop.getAddress()
+                barbershop.getAddress(),
+                barbershop.getTimeZone()
         );
     }
 }

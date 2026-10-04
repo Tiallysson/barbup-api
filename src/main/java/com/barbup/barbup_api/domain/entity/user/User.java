@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     private boolean emailVerified = false;
     @Column(length = 6)
     private String verificationCode;
-    private LocalDateTime verificationCodeExpiresAt;
+    private Instant verificationCodeExpiresAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
