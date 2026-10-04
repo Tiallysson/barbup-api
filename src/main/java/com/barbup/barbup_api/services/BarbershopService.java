@@ -5,6 +5,9 @@ import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.infra.event.BarbershopCreatedEvent;
 import com.barbup.barbup_api.shared.dto.barbershop.BarbershopResponseDTO;
 import com.barbup.barbup_api.shared.dto.barbershop.CreateBarbershopDTO;
+import com.barbup.barbup_api.shared.dto.barbershop.UpdateBarbershopDTO;
+import com.barbup.barbup_api.shared.exception.InvalidTimeZoneException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.barbup.barbup_api.domain.entity.barbershop.validation.Zipcode;
 import com.barbup.barbup_api.domain.entity.member.Member;
 import com.barbup.barbup_api.domain.entity.member.MemberRole;
@@ -70,6 +73,29 @@ public class BarbershopService {
                 createdAt));
 
         return barbershop;
+    }
+
+    @PreAuthorize("@barbershopAccess.canManage(#dto.id(), principal)")
+    public BarbershopResponseDTO updateBarbershop(UpdateBarbershopDTO dto, User authenticatedUser) {
+        Barbershop barbershop = barbershopRepository.findById(dto.id())
+                .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
+
+        if (dto.timeZone() != null) {
+            if (!ZoneId.getAvailableZoneIds().contains(dto.timeZone()))
+                throw new InvalidTimeZoneException(dto.timeZone());
+            barbershop.setTimeZone(dto.timeZone());
+        }
+
+        barbershop.setName(dto.name());
+        barbershop.setSlug(dto.slug());
+        barbershop.setPhone(dto.phone());
+        if (dto.logoUrl() != null && !dto.logoUrl().isBlank())
+            barbershop.setLogoUrl(dto.logoUrl());
+        addressMapper.updateEntity(dto.address(), barbershop.getAddress());
+
+        Barbershop saved = barbershopRepository.save(barbershop);
+
+        return barbershopMapper.toBarbershopResponseDTO(saved);
     }
 
     public List<BarbershopResponseDTO> getList(User user) {

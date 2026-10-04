@@ -6,6 +6,7 @@ import com.barbup.barbup_api.domain.entity.service.ServiceResponse;
 import com.barbup.barbup_api.services.ServiceService;
 import com.barbup.barbup_api.shared.dto.barbershop.BarbershopResponseDTO;
 import com.barbup.barbup_api.shared.dto.barbershop.CreateBarbershopDTO;
+import com.barbup.barbup_api.shared.dto.barbershop.UpdateBarbershopDTO;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourDto;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourResponseDTO;
@@ -38,5 +39,11 @@ public class BarbershopController {
     public ResponseEntity<BarbershopResponseDTO> create(@RequestBody @Valid CreateBarbershopDTO body, @AuthenticationPrincipal User authenticatedUser) {
         Barbershop barbershop = barbershopService.createBarbershop(body, authenticatedUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BarbershopResponseDTO(barbershop));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<BarbershopResponseDTO> update(@RequestBody @Valid UpdateBarbershopDTO body, @AuthenticationPrincipal User authenticatedUser) {
+        BarbershopResponseDTO response = barbershopService.updateBarbershop(body, authenticatedUser);
+        return ResponseEntity.ok(response);
     }
 }
