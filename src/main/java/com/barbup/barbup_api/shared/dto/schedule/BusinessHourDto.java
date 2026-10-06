@@ -6,11 +6,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public record BusinessHourDto(
-        @NotNull
-        UUID barbershopId,
         @NotNull
         DayOfWeek dayOfWeek,
         @NotNull

@@ -134,4 +134,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleInvalidResetToken(InvalidResetTokenException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponseDTO(ex.getMessage()));
     }
+
+    @ExceptionHandler(SamePasswordException.class)
+    public ResponseEntity<ErrorResponseDTO> handleSamePassword(SamePasswordException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(ex.getMessage()));
+    }
 }

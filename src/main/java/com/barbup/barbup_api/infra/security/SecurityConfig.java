@@ -33,7 +33,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    SecurityFilter securityFilter,
-                                                   AuthRateLimitFilter authRateLimitFilter) throws Exception {
+                                                   AuthRateLimitFilter authRateLimitFilter,
+                                                   BarbershopMemberAuthorizationManager barbershopMember) throws Exception {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
@@ -53,6 +54,8 @@ public class SecurityConfig {
                                 "/scalar.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/manage/barbershops/{barbershopId}/**").access(barbershopMember)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authRateLimitFilter, UsernamePasswordAuthenticationFilter.class)

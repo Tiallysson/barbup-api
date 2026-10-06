@@ -5,8 +5,8 @@ import com.barbup.barbup_api.domain.entity.user.UserRole;
 
 import java.util.UUID;
 
-public record UserResponseDTO(UUID id, String name, String email, UserRole role) {
+public record UserResponseDTO(UUID id, String name, String email, UserRole role, String phone) {
     public UserResponseDTO(User user) {
-        this(user.getId(), user.getName(), user.getEmail(), user.getRole());
+        this(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getPhone());
     }
 }

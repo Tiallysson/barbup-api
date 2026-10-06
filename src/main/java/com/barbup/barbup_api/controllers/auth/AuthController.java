@@ -1,4 +1,4 @@
-package com.barbup.barbup_api.controllers;
+package com.barbup.barbup_api.controllers.auth;
 
 import com.barbup.barbup_api.shared.dto.DefaultReponse;
 import com.barbup.barbup_api.shared.dto.password.ForgotPasswordRequest;
