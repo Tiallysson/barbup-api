@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -75,9 +76,9 @@ public class BarbershopService {
         return barbershop;
     }
 
-    @PreAuthorize("@barbershopAccess.canManage(#dto.id(), principal)")
-    public BarbershopResponseDTO updateBarbershop(UpdateBarbershopDTO dto, User authenticatedUser) {
-        Barbershop barbershop = barbershopRepository.findById(dto.id())
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public BarbershopResponseDTO updateBarbershop(UUID barbershopId, UpdateBarbershopDTO dto) {
+        Barbershop barbershop = barbershopRepository.findById(barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
 
         if (dto.timeZone() != null) {

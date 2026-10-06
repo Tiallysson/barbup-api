@@ -6,11 +6,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.UUID;
 
 public record UpdateBarbershopDTO(
-        @NotNull
-        UUID id,
         @NotBlank
         String name,
         @NotBlank

@@ -39,4 +39,6 @@ public interface BusinessHoursRepository extends JpaRepository<BusinessHours, UU
                                        @Param("excludeId") UUID excludeId);
 
     Optional<List<BusinessHours>> findAllByBarbershopId(UUID barbershopId);
+
+    Optional<BusinessHours> findByIdAndBarbershopId(UUID id, UUID barbershopId);
 }

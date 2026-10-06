@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import com.barbup.barbup_api.domain.entity.barbershop.Barbershop;
 import com.barbup.barbup_api.domain.entity.schedule.BusinessHours;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourDto;
-import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.shared.dto.schedule.BusinessHourResponseDTO;
 import com.barbup.barbup_api.shared.exception.BusinessHourConflictException;
 import com.barbup.barbup_api.shared.exception.InvalidBusinessHourException;
@@ -25,9 +24,9 @@ public class BusinessHoursService {
     private final BusinessHoursRepository businessHoursRepository;
     private final BarbershopRepository barbershopRepository;
 
-    @PreAuthorize("@barbershopAccess.canManage(#dto.barbershopId(), principal)")
-    public BusinessHours createBusinessHour(BusinessHourDto dto, User authenticatedUser) {
-        Barbershop barbershop = barbershopRepository.findById(dto.barbershopId())
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public BusinessHours createBusinessHour(UUID barbershopId, BusinessHourDto dto) {
+        Barbershop barbershop = barbershopRepository.findById(barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
 
         if (!dto.openTime().isBefore(dto.closeTime())) {
@@ -63,15 +62,13 @@ public class BusinessHoursService {
                 .collect(Collectors.toList());
     }
 
-    @PreAuthorize("@barbershopAccess.canManageBusinessHour(#body.id(), principal)")
-    public List<BusinessHourResponseDTO> updateBusinessHours(BusinessHourUpdateDTO body) {
-        BusinessHours hours = businessHoursRepository.findById(body.id())
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public List<BusinessHourResponseDTO> updateBusinessHours(UUID barbershopId, UUID hourId, BusinessHourUpdateDTO body) {
+        BusinessHours hours = businessHoursRepository.findByIdAndBarbershopId(hourId, barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Business hour not found"));
 
         if (!body.openTime().isBefore(body.closeTime()))
             throw new InvalidBusinessHourException("Open time must be before close time");
-
-        UUID barbershopId = hours.getBarbershop().getId();
 
         if (businessHoursRepository.existsOverlappingExcluding(barbershopId, hours.getDayOfWeek(), body.openTime(), body.closeTime(), hours.getId()))
             throw new BusinessHourConflictException(hours.getDayOfWeek());

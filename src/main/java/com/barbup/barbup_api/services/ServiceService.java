@@ -6,14 +6,12 @@ import com.barbup.barbup_api.domain.entity.service.ServiceRegister;
 import com.barbup.barbup_api.domain.entity.service.ServiceResponse;
 import com.barbup.barbup_api.domain.entity.service.ServiceUpdate;
 import com.barbup.barbup_api.domain.entity.service.Services;
-import com.barbup.barbup_api.domain.entity.user.User;
 import com.barbup.barbup_api.infra.persistence.BarbershopRepository;
 import com.barbup.barbup_api.infra.persistence.ServiceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +23,9 @@ public class ServiceService {
     private final BarbershopRepository barbershopRepository;
     private final ServiceRepository serviceRepository;
 
-    @PreAuthorize("@barbershopAccess.canManage(#register.barbershopId(), principal)")
-    public ServiceResponse createService(ServiceRegister register, User authenticatedUser) {
-        Barbershop barbershop = barbershopRepository.findById(register.barbershopId())
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public ServiceResponse createService(UUID barbershopId, ServiceRegister register) {
+        Barbershop barbershop = barbershopRepository.findById(barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Barbershop not found"));
 
         Services service = new Services();
@@ -49,9 +47,9 @@ public class ServiceService {
                 );
     }
 
-    @PreAuthorize("@barbershopAccess.canManageService(#register.id(), principal)")
-    public ServiceResponse updateService(ServiceUpdate register, User authenticatedUser) {
-        Services services = serviceRepository.findById(register.id())
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public ServiceResponse updateService(UUID barbershopId, UUID serviceId, ServiceUpdate register) {
+        Services services = serviceRepository.findByIdAndBarbershopId(serviceId, barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
 
         services.setName(register.name());
@@ -70,9 +68,9 @@ public class ServiceService {
         );
     }
 
-    @PreAuthorize("@barbershopAccess.canManageService(#id, principal)")
-    public boolean deleteService(UUID id, User authenticatedUser) {
-        Services services = serviceRepository.findById(id)
+    @PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")
+    public boolean deleteService(UUID barbershopId, UUID serviceId) {
+        Services services = serviceRepository.findByIdAndBarbershopId(serviceId, barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
 
         services.delete();

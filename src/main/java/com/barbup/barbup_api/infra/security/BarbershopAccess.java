@@ -27,24 +27,10 @@ public class BarbershopAccess {
         return hasRole(barbershopId, principal, MANAGERS);
     }
 
-    public boolean canManageService(UUID serviceId, Object principal) {
-        if (serviceId == null || !(principal instanceof User user)) {
-            return false;
-        }
-        return memberRepository.existsByServiceIdAndUserIdAndRoleIn(serviceId, user.getId(), MANAGERS);
-    }
-
     private boolean hasRole(UUID barbershopId, Object principal, Set<MemberRole> roles) {
         if (barbershopId == null || !(principal instanceof User user)) {
             return false;
         }
         return memberRepository.existsByBarbershopIdAndUserIdAndRoleIn(barbershopId, user.getId(), roles);
-    }
-
-    public boolean canManageBusinessHour(UUID businessHourId, Object principal) {
-        if (businessHourId == null || !(principal instanceof User user)) {
-            return false;
-        }
-        return memberRepository.existsByBusinessHourIdAndUserIdAndRoleIn(businessHourId, user.getId(), MANAGERS);
     }
 }
