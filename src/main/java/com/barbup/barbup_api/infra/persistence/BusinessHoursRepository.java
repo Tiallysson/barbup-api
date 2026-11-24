@@ -40,5 +40,7 @@ public interface BusinessHoursRepository extends JpaRepository<BusinessHours, UU
 
     Optional<List<BusinessHours>> findAllByBarbershopId(UUID barbershopId);
 
+    List<BusinessHours> findAllByBarbershopIdAndDayOfWeek(UUID barbershopId, DayOfWeek dayOfWeek);
+
     Optional<BusinessHours> findByIdAndBarbershopId(UUID id, UUID barbershopId);
 }

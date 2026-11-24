@@ -101,6 +101,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(SlotUnavailableException.class)
+    public ResponseEntity<ErrorResponseDTO> handleSlotUnavailable(SlotUnavailableException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         var error = new ErrorResponseDTO("Duplicate or invalid data");
