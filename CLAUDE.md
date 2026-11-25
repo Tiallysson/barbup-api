@@ -4,78 +4,65 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Barbup API is a Spring Boot 4.1.0 (Java 25) REST backend for a barbershop management/booking product. It uses Maven, Spring Data JPA (PostgreSQL, via Supabase), Spring Security with stateless JWT auth, and springdoc-openapi (JSON generation only) with a static Scalar page for API docs.
+Barbup API is a Spring Boot 4.1.0 (Java 25) REST backend for a barbershop management/booking product. Maven, Spring Data JPA on PostgreSQL (Supabase), Flyway, Spring Security with stateless JWT (`com.auth0:java-jwt`), MapStruct, Thymeleaf (email templates only), Bucket4j + Caffeine (rate limiting), and springdoc-openapi (JSON only) served through a static Scalar page at `/scalar.html`.
 
-Note: the Maven `groupId`/base package is `com.barbup.barbup_api` (underscore) instead of `com.barbup.barbup-api`, because hyphens are invalid in Java package names — this is intentional, not a typo, per `HELP.md`.
+The base package is `com.barbup.barbup_api` (underscore) because hyphens are invalid in Java package names — intentional, not a typo.
 
 ## Commands
 
-All commands use the Maven wrapper (no local Maven install required).
-
 ```
-./mvnw compile                      # compile
-./mvnw test                         # run all tests
-./mvnw test -Dtest=ClassName                    # run a single test class
-./mvnw test -Dtest=ClassName#methodName         # run a single test method
-./mvnw spring-boot:run                          # run the app (uses application.properties)
+./mvnw compile
+./mvnw test
+./mvnw test -Dtest=ClassName
+./mvnw test -Dtest=ClassName#methodName
 ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=local"
-                                                # run with local profile (application-local.properties)
-./mvnw clean package                # build the jar
+./mvnw clean package
 ```
 
-On Windows use `mvnw.cmd` instead of `./mvnw` when not in a POSIX shell.
+On Windows use `mvnw.cmd` outside a POSIX shell. No linter is configured. The only test is `BarbupApiApplicationTests.contextLoads` (`@SpringBootTest`), which needs a reachable database and all required properties to pass. The `Dockerfile` builds with `-DskipTests`.
 
-There is no linter configured in this repo.
+## Configuration
 
-## Local Development Setup
-
-Create `src/main/resources/application-local.properties` with local values (sample provided in `application-local.properties`). Before running locally:
-
-1. **PostgreSQL**: Start a local instance (`docker run ... postgres`) or use an existing one.
-2. **Run**: `./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=local"`
-3. **Flyway** will auto-migrate the schema on startup using scripts in `src/main/resources/db/migration/`.
-
-`application.properties` holds prod/staging config with env-var placeholders; `application-local.properties` has hardcoded dev values (committed, safe).
+- `application.properties` (tracked) — env-var placeholders: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `RESEND_API_KEY`, `MAILJET_API_KEY`, `MAILJET_API_SECRET`, `MAILJET_SENDER_EMAIL`, `EMAIL_PROVIDER` (default `mailjet`), `CORS_ALLOWED_ORIGINS` (comma-separated).
+- `application-local.properties` — **gitignored and contains real credentials**; loaded on top of `application.properties` with the `local` profile. Never commit it or copy its values elsewhere. It does not define `app.cors.allowed-origins`, so `CORS_ALLOWED_ORIGINS` must be set in the environment (or added to the local file) for the app to start.
+- `.gitignore` ignores `*.properties`; a new tracked properties file needs `git add -f`.
+- Schema is owned by Flyway (`src/main/resources/db/migration/VN__description.sql`) with `ddl-auto=validate`. Any entity change needs a new migration; never edit an applied one. Timestamps are `Instant`/`timestamptz` in UTC.
 
 ## Architecture
 
-### Package layout (`src/main/java/com/barbup/barbup_api/`)
+Package layout under `src/main/java/com/barbup/barbup_api/`:
 
-- `controllers/` — `@RestController` classes, one per resource (`AuthController`, `BarbershopController`, `UserController`). Controllers are thin: they validate input via `@Validated` DTOs and delegate to a `services/` class.
-- `services/` — business logic. Services are `@Autowired`-field-injected (not constructor injection), except controllers which use `@RequiredArgsConstructor` on `final` fields.
-- `domain/` — JPA entities and their DTOs, grouped by aggregate:
-  - `domain/abstracts/BaseEntity` — mapped superclass all entities extend. Provides UUID string `id`, `active` soft-delete flag, and Spring Data JPA auditing fields (`createdAt`/`updatedAt`/`createdBy`/`updatedBy`).
-  - `domain/user/` — `User` (implements Spring Security `UserDetails`), `UserRole` enum (ADMIN/USER), DTOs.
-  - `domain/barbershop/` — `Barbershop` entity (has an `owner` -> `User`), and nested aggregates: `member/` (`Member`, `MemberRole`), `schedule/` (`BusinessHours`, `BarberSchedule`, `BarberTimeOff`), `appointment/` (`Appointment`, `AppointmentStatus`, `AppointmentSource`), `service/` (`Service`).
-  - Each DTO subpackage (`dto/`) holds request/response records for that aggregate; DTOs use `jakarta.validation` annotations (`@NotBlank`, `@NotNull`) and controllers validate them with `@Validated`.
-- `repositories/` — plain `JpaRepository<Entity, String>` interfaces (String id, matching `BaseEntity`'s UUID string PK). Custom query methods (e.g. `UserRepository.findByEmail`) live here. **Important:** Queries use JPQL (entity/property names) not SQL. Use `@Query` with entity names (`PasswordResetCode`) and attribute names (`c.consumedAt`); for relationships, traverse with dot notation (`c.user.id`). Only use `nativeQuery=true` for DB-specific features.
-- `infra/security/` — JWT auth stack:
-  - `TokenService` issues/validates HS256 JWTs (issuer `barbup-api`, subject = user email) using `api.security.token.secret` from `application.properties`.
-  - `SecurityFilter` (`OncePerRequestFilter`) reads the `Authorization: Bearer <token>` header, validates it via `TokenService`, loads the `User` by email, and sets it in `SecurityContextHolder`.
-  - `SecurityConfig` wires the filter chain: CSRF disabled, stateless sessions, `POST /auth/login`, `POST /auth/register`, `/v3/api-docs/**` and `/scalar.html` are public, everything else requires authentication.
-  - `AuditorAwareImpl` supplies `createdBy`/`updatedBy` for JPA auditing from the current `SecurityContextHolder` authentication (email).
-- `infra/cors/CorsConfig` — global CORS mapping (currently allows `http://localhost:3000`, GET/POST only).
-- `infra/event/` — Spring application events (`PasswordResetRequestedEvent`, `PasswordChangedEvent`, etc.). Services publish events via `ApplicationEventPublisher`; event handlers use `@EventListener` methods (e.g., `EmailEventListener` sends emails when events fire).
-- `infra/mappers/` — MapStruct `@Mapper` classes for DTO ↔ Entity conversions. Warnings about unmapped target properties are normal for BaseEntity fields (`id`, `createdAt`, etc.) that come from the database, not the DTO.
-- `infra/persistence/` — repositories moved here from `repositories/` (refactored into `infra/`).
-- `infra/mappers/` — DTO mappers (e.g. `BarbershopMapper`).
-- `exception/` — `GlobalExceptionHandler` (`@RestControllerAdvice`) centralizes error responses (validation errors, `EntityNotFoundException`, `AccessDeniedException`, `BadCredentialsException`, `UsernameNotFoundException`, custom `EmailAlreadyExistsException`, malformed JSON, and a generic 500 fallback). Add new domain exceptions here rather than handling errors ad hoc in controllers.
+- `controllers/` — thin `@RestController`s grouped by audience, each with its own URL prefix: `auth/` (`/auth/**`, public), `account/` (`/me`, any logged-in user), `client/` (`/client/barbershops/{barbershopId}/...`, read-only data customers need), `manage/` (`/manage/barbershops/**`, shop staff). `/admin/**` is reserved for `UserRole.ADMIN`. Shop-scoped IDs travel in the path (`{barbershopId}`, `{serviceId}`, `{hourId}`), never in request bodies. Validate DTOs with `@Valid`; get the caller via `@AuthenticationPrincipal User`.
+- `services/` — business logic and **authorization**. Constructor injection only: `private final` fields + Lombok `@RequiredArgsConstructor` (or an explicit constructor), never field `@Autowired`. In `@Configuration` classes take dependencies and `@Value`s as `@Bean` method parameters.
+- `domain/abstracts/BaseEntity` + `domain/entity/<aggregate>/` — JPA entities (`user`, `barbershop`, `member`, `schedule`, `appointment`, `service`, `address`, `password`). Entities use Lombok `@Getter @Setter @AllArgsConstructor @NoArgsConstructor`.
+- `shared/dto/<area>/` — request/response records with `jakarta.validation` annotations. `shared/exception/` — custom domain exceptions.
+- `exception/GlobalExceptionHandler` — single `@RestControllerAdvice` mapping exceptions to status codes and `ErrorResponseDTO`. New domain exceptions go in `shared/exception/` and get a handler here.
+- `infra/persistence/` — Spring Data repositories, `JpaRepository<Entity, UUID>`. Custom queries use JPQL (entity/attribute names, dot traversal like `c.user.id`); `nativeQuery = true` only for DB-specific features.
+- `infra/mappers/` — MapStruct mappers (`componentModel = "spring"`). Unmapped-target warnings for `BaseEntity` fields are expected.
+- `infra/security/`, `infra/ratelimit/`, `infra/event/`, `infra/email/` — see below.
 
-### Entity conventions
+### Entities
 
-- All entities extend `BaseEntity` and get a UUID `id`, soft-delete (`active` boolean + `@SQLRestriction("active = true")` so deleted rows are auto-filtered from queries), and auditing timestamps/users. Call `entity.delete()` (sets `active = false`) instead of hard-deleting.
-- Entities use Lombok `@Getter @Setter @AllArgsConstructor @NoArgsConstructor`; keep that pattern for new entities.
-- **Flyway migrations** (`src/main/resources/db/migration/`) manage schema changes. When adding an entity, create a new migration file `VN__description.sql` (e.g. `V3__create_password_reset_tokens_table.sql`). Flyway auto-runs migrations on startup. `spring.jpa.hibernate.ddl-auto=validate` ensures entities match the schema.
+`BaseEntity` gives every entity a UUIDv7 `UUID id`, an `active` soft-delete flag with `@SQLRestriction("active = true")` (inactive rows disappear from all JPA queries), and auditing (`createdAt`/`updatedAt`/`createdBy`/`updatedBy`). Auditing is enabled via `@EnableJpaAuditing(auditorAwareRef = "auditorAware")`; `AuditorAwareImpl` uses the authenticated email. Soft-delete with `entity.delete()` instead of repository deletes.
 
-### Auth flow
+### Authentication
 
-1. `POST /auth/register` creates a `User` with `UserRole.USER`, BCrypt-hashed password.
-2. `POST /auth/login` authenticates via Spring Security's `AuthenticationManager`, then `TokenService` issues a JWT (2h expiry).
-3. Subsequent requests send `Authorization: Bearer <token>`; `SecurityFilter` resolves it to a `User` principal, injectable into controllers via `@AuthenticationPrincipal User`.
-4. Barbershop creation (`BarbershopService.createBarbershop`) also creates a `Member` row linking the owning `User` to the new `Barbershop` with `MemberRole.OWNER` — barbershop membership (not just `Barbershop.owner`) is the source of truth for who belongs to a shop and with what role.
+- `TokenService` issues/validates HS256 JWTs (issuer `barbup-api`, subject = email, 2h TTL).
+- `SecurityFilter` reads `Authorization: Bearer`, loads the `User` by email and puts it in the `SecurityContext`. `User` implements `UserDetails`; `isEnabled()` is `emailVerified`, so unverified users fail login with `DisabledException` (403).
+- `SecurityConfig`: stateless, CSRF off, 401 entry point, `@EnableMethodSecurity`. The public `POST /auth/*` endpoints (login, register, confirm-email, verify-code, forgot-password, reset-password, resend-verification) plus `/scalar.html` and `/v3/api-docs/**` are whitelisted; `/admin/**` requires `ROLE_ADMIN`; `/manage/barbershops/{barbershopId}/**` goes through `BarbershopMemberAuthorizationManager` (caller must be a `Member` of that shop, invalid UUID → 403); everything else requires auth. Matcher order matters — add rules before `anyRequest()`. CORS is the `corsConfigurationSource` bean in this class (origins from `app.cors.allowed-origins`).
+- `AuthRateLimitFilter` runs before the security filter and rate-limits the public auth POSTs per IP using `RateLimitPlan`. New public auth endpoints must be added both to the `SecurityConfig` whitelist and to `PLANS` here.
 
-### Config
+### Authorization (barbershop membership)
 
-- `src/main/resources/application.properties` — prod/staging config with env-var placeholders (`${DB_URL}`, `${JWT_SECRET}`, etc.). Never commit real secrets here.
-- `src/main/resources/application-local.properties` — local dev config with hardcoded values (safe to commit; used only locally via `--spring.profiles.active=local`).
-- Spring profiles: the `application-{profile}.properties` file is loaded in addition to `application.properties` when `--spring.profiles.active={profile}` is set. Use `local` for development, `prod`/`staging` for deployments.
+`UserRole` (USER/ADMIN) is platform-level only. Per-shop permissions come from `Member` (`barbershop_member`: user + barbershop + `MemberRole` OWNER/BARBER/RECEPTIONIST), which is the source of truth for who belongs to a shop. Creating a barbershop also creates the OWNER `Member`.
+
+Authorization has three layers:
+1. URL: the `/manage/barbershops/{barbershopId}/**` membership gate in `SecurityConfig` (any `MemberRole`).
+2. Method: `@PreAuthorize` on **service methods** against the `barbershopAccess` bean (`infra/security/BarbershopAccess`) for the specific `MemberRole`, e.g. `@PreAuthorize("@barbershopAccess.canManage(#barbershopId, principal)")` (OWNER only). Service methods take `barbershopId` as a parameter for this.
+3. Ownership: load shop-owned resources with `findByIdAndBarbershopId(id, barbershopId)` so an ID from another shop yields 404.
+
+`BarbershopAccess` queries `MemberRepository` on every call, so membership changes take effect immediately. Don't put shop roles in the JWT.
+
+### Events and email
+
+Services publish events (`infra/event/*Event`) via `ApplicationEventPublisher`; listeners in `infra/event/listener/` are `@Async @EventListener` and render Thymeleaf templates from `src/main/resources/templates/email/` through `EmailTemplateRenderer`, then send via `EmailService`. The implementation is chosen by `app.email.provider` (`MailjetEmailService` by default, `ResendEmailService` when `resend`) with `@ConditionalOnProperty`. Listeners catch and log send failures, so email errors don't fail the request.
