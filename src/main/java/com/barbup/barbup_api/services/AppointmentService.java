@@ -22,6 +22,7 @@ import com.barbup.barbup_api.shared.dto.appointment.AvailabilityResponseDTO;
 import com.barbup.barbup_api.shared.dto.appointment.AvailableBarberDTO;
 import com.barbup.barbup_api.shared.dto.appointment.AvailableSlotDTO;
 import com.barbup.barbup_api.shared.dto.appointment.CreateAppointmentDTO;
+import com.barbup.barbup_api.shared.exception.InvalidServiceDurationException;
 import com.barbup.barbup_api.shared.exception.SlotUnavailableException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +66,7 @@ public class AppointmentService {
         Barbershop barbershop = findBarbershop(barbershopId);
         Services service = findService(serviceId, barbershopId);
         ZoneId zone = ZoneId.of(barbershop.getTimeZone());
-        Duration duration = Duration.ofMinutes(service.getDurationMinutes());
+        Duration duration = serviceDuration(service);
 
         Map<Instant, List<Member>> slots = computeSlots(barbershopId, zone, date, duration, resolveBarbers(barbershopId, barberId));
 
@@ -90,7 +91,7 @@ public class AppointmentService {
         Barbershop barbershop = findBarbershop(barbershopId);
         Services service = findService(dto.serviceId(), barbershopId);
         ZoneId zone = ZoneId.of(barbershop.getTimeZone());
-        Duration duration = Duration.ofMinutes(service.getDurationMinutes());
+        Duration duration = serviceDuration(service);
         Instant start = dto.startAt();
         Instant end = start.plus(duration);
         LocalDate date = LocalDate.ofInstant(start, zone);
@@ -220,6 +221,14 @@ public class AppointmentService {
     private Services findService(UUID serviceId, UUID barbershopId) {
         return serviceRepository.findByIdAndBarbershopId(serviceId, barbershopId)
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
+    }
+
+    private Duration serviceDuration(Services service) {
+        Integer minutes = service.getDurationMinutes();
+        if (minutes == null || minutes <= 0) {
+            throw new InvalidServiceDurationException("Service duration must be greater than zero");
+        }
+        return Duration.ofMinutes(minutes);
     }
 
     private AvailableBarberDTO toBarberDto(Member member) {

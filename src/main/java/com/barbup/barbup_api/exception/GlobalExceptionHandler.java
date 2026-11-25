@@ -107,6 +107,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(InvalidServiceDurationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidServiceDuration(InvalidServiceDurationException ex) {
+        var error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         var error = new ErrorResponseDTO("Duplicate or invalid data");
